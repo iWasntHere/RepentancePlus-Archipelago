@@ -2,9 +2,21 @@ from dataclasses import dataclass
 
 from Options import Range, Toggle, Choice, PerGameCommonOptions
 
+class GameMode(Choice):
+    """Game mode. Only option is 'Baby Hunt,' where you must collect a certain number of Co-Op babies."""
+    display_name = "Game Mode"
+    option_baby_hunt = 0
+    option_anything_else = 1
+    default = 0
+
+class MaxBabies(Range):
+    """The number of babies available to find in Baby Hunt mode."""
+    range_start = 1
+    range_end = 50
+    default = 20
 
 class BabyRatioRequired(Range):
-    """Percentage of babies needed to win. There are 49 babies in total."""
+    """Percentage of babies needed to win in Baby Hunt mode."""
     display_name = "Baby Ratio Required"
     range_start = 1
     range_end = 100
@@ -13,6 +25,11 @@ class BabyRatioRequired(Range):
 class IncludeChallenges(Toggle):
     """Include challenges. If disabled, the locations will be filler."""
     display_name = "Include Challenges"
+
+class LockAllItems(Toggle):
+    """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
+    trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
+    display_name = "Lock All Items"
 
 class IncludeGreedMode(Choice):
     """Whether to include greed/greedier mode. If disabled, the locations will be filler. If any type of Greed Mode
@@ -64,7 +81,10 @@ class StartingCharacter(Choice):
 
 @dataclass
 class TBOIOptions(PerGameCommonOptions):
+    game_mode: GameMode
+    max_babies: MaxBabies
+    baby_ratio_required: BabyRatioRequired
+    lock_all_items: LockAllItems
     include_greed_mode: IncludeGreedMode
     include_challenges: IncludeChallenges
-    baby_ratio_required: BabyRatioRequired
     starting_character: StartingCharacter

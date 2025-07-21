@@ -1,6 +1,9 @@
-from BaseClasses import Item, Tutorial
+from typing import Dict
+
+from BaseClasses import Item, Tutorial, LocationProgressType
 from worlds.AutoWorld import World, WebWorld
-from .Items import filler_items, trap_items, get_items_table, TBOIItem, ItemData, character_items
+from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool
+from .Items_Data import items_data
 from .Locations import make_locations, LocationData
 from .Options import TBOIOptions
 from .Regions import make_regions
@@ -33,36 +36,33 @@ class TBOIWorld(World):
     options: TBOIOptions
 
     starting_character_item: str
+    default_items: list[str]
 
-    item_name_to_id = {item[0]: item[1].code for item in get_items_table(None).items()}
+    item_name_to_id = {item[0]: item[1].code for item in items_data.items()}
     location_name_to_id = {location.name: location.code for location in make_locations(None)}
 
+    usable_items: Dict[str, ItemData] # Items that will appear in the multiworld
+    default_items: Dict[str, ItemData] # Items that start unlocked for the player
+
     item_name_groups = {
-        "Co-Op Baby": [name for name, data in get_items_table(None).items() if data.category == "Co-Op Baby"]
+        "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
 
     def set_rules(self):
         make_rules(self)
 
     def create_item(self, name: str) -> Item:
-        return TBOIItem(self.player, name, get_items_table(self)[name])
+        return TBOIItem(self.player, name, items_data[name])
 
     def create_items(self):
-        items: list[TBOIItem] = []
+        items_table: dict[str: ItemData] = {name: item for name, item in self.usable_items.items()}
 
-        excluded_items = [self.starting_character_item, "Victory"] # Filter some items out
-        items_table: dict[str: ItemData] = {name: item for name, item in get_items_table(self).items() if name not in excluded_items}
+        # Now we can actually add some stuff!
+        for name, data in items_table.items():
+            for i in range(data.amount): # In case we have multiple copies
+                self.multiworld.itempool.append(TBOIItem(self.player, name, data))
 
-        # Generate regular items
-        for item_name in items_table.keys():
-            items.append(TBOIItem(self.player, item_name, get_items_table(self)[item_name]))
-
-        # Generate filler
-        for _ in range(len(self.multiworld.get_unfilled_locations(self.player)) - len(items)):
-            name = self.get_filler_item_name()
-            items.append(TBOIItem(self.player, name, items_table[name]))
-
-        self.multiworld.itempool += items
+        print("Done")
 
     def create_regions(self):
         make_regions(self, make_locations(self))
@@ -76,3 +76,12 @@ class TBOIWorld(World):
     def generate_early(self) -> None:
         self.starting_character_item = character_items[self.options.starting_character.value]
         self.multiworld.push_precollected(self.create_item(self.starting_character_item))
+
+        excluded_items = [self.starting_character_item]  # Filter some items out
+
+        # Kind of a bad hack, but we need to know how many locations are going to be local so
+        # we know how many items to add to the pool.
+        locations = make_locations(self)
+
+        self.usable_items = generate_items_for_pool(self, len(locations), len([data.name for data in locations if data.progress_type != LocationProgressType.EXCLUDED]), excluded_items)
+        self.default_items = {name: data for name, data in items_data.items() if name not in self.usable_items}

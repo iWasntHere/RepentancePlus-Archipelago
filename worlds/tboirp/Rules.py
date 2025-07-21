@@ -53,6 +53,9 @@ def set_region_access_rule(mw: MultiWorld, player: int, region: str, rule: Colle
     for entrance in mw.get_region(region, player).entrances:
         entrance.access_rule = rule
 
+def has(name: str, state: CollectionState, world: "TBOIWorld", player: int):
+    return name in world.default_items or state.has(name, player)
+
 def make_rules(world: "TBOIWorld"):
     ply = world.player
     mw = world.multiworld
@@ -61,19 +64,19 @@ def make_rules(world: "TBOIWorld"):
 
     mw.get_location("All Co-Op Babies Found", ply).place_locked_item(world.create_item("Victory"))
 
-    set_region_access_rule(mw, ply, "Cellar", lambda state: state.has("Cellar", ply))
+    set_region_access_rule(mw, ply, "Cellar", lambda state: state.has("The Cellar", ply))
     set_region_access_rule(mw, ply, "Burning Basement", lambda state: state.has("Burning Basement", ply))
 
     set_region_access_rule(mw, ply, "Downpour", lambda state: state.has("A Secret Exit", ply))
     set_region_access_rule(mw, ply, "Dross", lambda state: state.has_all(["A Secret Exit", "Dross"], ply))
 
-    set_region_access_rule(mw, ply, "Catacombs", lambda state: state.has("Catacombs", ply))
+    set_region_access_rule(mw, ply, "Catacombs", lambda state: state.has("The Catacombs", ply))
     set_region_access_rule(mw, ply, "Flooded Caves", lambda state: state.has("Flooded Caves", ply))
 
     set_region_access_rule(mw, ply, "Mines", lambda state: state.has("A Secret Exit", ply))
     set_region_access_rule(mw, ply, "Ashpit", lambda state: state.has_all(["A Secret Exit", "Ashpit"], ply))
 
-    set_region_access_rule(mw, ply, "Necropolis", lambda state: state.has("Necropolis", ply))
+    set_region_access_rule(mw, ply, "Necropolis", lambda state: state.has("The Necropolis", ply))
     set_region_access_rule(mw, ply, "Dank Depths", lambda state: state.has("Dank Depths", ply))
 
     set_region_access_rule(mw, ply, "Mausoleum", lambda state: state.has("A Secret Exit", ply))
@@ -93,7 +96,7 @@ def make_rules(world: "TBOIWorld"):
     set_region_access_rule(mw, ply, "The Chest", lambda state: state.has("The Polaroid", ply))
 
     set_region_access_rule(mw, ply, "Mega Satan", lambda state: state.has("Angels", ply))
-    set_region_access_rule(mw, ply, "The Void", lambda state: state.has("The Void", ply))
+    set_region_access_rule(mw, ply, "The Void", lambda state: state.has("New Area", ply))
     set_region_access_rule(mw, ply, "Ascent", lambda state: state.has("A Strange Door", ply) and state.has_any(["The Polaroid", "The Negative"], ply))
 
     set_region_access_rule(mw, ply, "Greedier Mode", lambda state: state.has("Greedier!", ply))

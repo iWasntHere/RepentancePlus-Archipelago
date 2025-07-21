@@ -52,7 +52,7 @@ def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_lo
 
     # If we don't need greedier, then the unlock for it is considered useful instead of progression.
     if world.options.include_greed_mode.option_none or world.options.include_greed_mode.option_greed_mode_only:
-        set_item_classification("Greedier!", ItemClassification.useful)
+        set_item_classification("Greedier!", ItemClassification.progression)
 
     # Filter out any of the 'excluded' items (as well as victory, and traps/fillers)
     filtered_items = {name: data for name, data in items_data.items() if name not in exclude_items and data.categories[0] not in ["Victory", "Trap", "Filler"]}

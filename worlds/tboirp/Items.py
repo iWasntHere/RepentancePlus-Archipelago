@@ -45,20 +45,26 @@ def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_lo
         for name in world.random.choices([name for name in items_data if "Co-Op_Baby" in items_data[name].categories]):
             set_item_classification(name, ItemClassification.progression_skip_balancing)
 
-    # Should we make challenges useful rather than progression?
-    if not world.options.include_challenges:
+    # Set challenges to filler if they don't contribute anything
+    if world.options.include_challenges == world.options.include_challenges.option_remove:
         for name in world.random.choices([name for name in items_data if "Challenge" in items_data[name].categories]):
-            set_item_classification(name, ItemClassification.useful)
-
-    # If we don't need greedier, then the unlock for it is considered useful instead of progression.
-    if world.options.include_greed_mode.option_none or world.options.include_greed_mode.option_greed_mode_only:
-        set_item_classification("Greedier!", ItemClassification.progression)
+            set_item_classification(name, ItemClassification.filler)
 
     # Filter out any of the 'excluded' items (as well as victory, and traps/fillers)
     filtered_items = {name: data for name, data in items_data.items() if name not in exclude_items and data.categories[0] not in ["Victory", "Trap", "Filler"]}
 
     # All of these MUST get added
-    progression_items = [name for name, data in filtered_items.items() if data.classification in [ItemClassification.progression, ItemClassification.useful]]
+    progression_items = [name for name, data in filtered_items.items() if data.classification in [ItemClassification.progression]]
+
+    # If on Baby Hunt, select some babies to add
+    if world.options.game_mode == world.options.game_mode.option_baby_hunt:
+        all_babies = [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
+        world.random.shuffle(all_babies)
+
+        # Set chosen babies to be progression & add them to the progression items list
+        for baby in all_babies[:world.options.max_babies]:
+            set_item_classification(baby, ItemClassification.progression_skip_balancing)
+            progression_items.append(baby)
 
     # Items to add to the pool as filler
     shuffle_items = [name for name, data in filtered_items.items() if data.classification == ItemClassification.filler and "Co-Op_Baby" not in items_data[name].categories]
@@ -115,9 +121,14 @@ def set_item_classification(name: str, classification: ItemClassification):
     data = items_data[name]
     items_data[name] = ItemData(data.code, classification, data.categories, data.achievement, data.amount, data.quality)
 
+"""
+Adds 1 copy of the item to the pool
+"""
 def add_count_to_item(name: str, amount_to_add: int):
     data = items_data[name]
     items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.amount + amount_to_add, data.quality)
+
+
 
 trap_items = (
     "Fool Trap",

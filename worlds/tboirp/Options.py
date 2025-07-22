@@ -13,7 +13,7 @@ class MaxBabies(Range):
     """The number of babies available to find in Baby Hunt mode."""
     range_start = 1
     range_end = 50
-    default = 20
+    default = 50
 
 class BabyRatioRequired(Range):
     """Percentage of babies needed to win in Baby Hunt mode."""
@@ -22,14 +22,34 @@ class BabyRatioRequired(Range):
     range_end = 100
     default = 80
 
-class IncludeChallenges(Toggle):
-    """Include challenges. If disabled, the locations will be filler."""
-    display_name = "Include Challenges"
+class ShopDonations(Range):
+    """Number of shop donation locations to add. Each location costs 15 cents per check at a shop."""
+    display = "Shop Donations"
+    range_start = 0
+    range_end = 50
+    default = 10
 
-class LockAllItems(Toggle):
-    """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
-    trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
-    display_name = "Lock All Items"
+class GreedDonations(Range):
+    """Number of greed donation locations to add. Each location costs 15 cents per check after Ultra Greed."""
+    display = "Shop Donations"
+    range_start = 0
+    range_end = 50
+    default = 12
+
+class ConsumableLocations(Range):
+    """Number of locations to add that are found by using a special AP Rune."""
+    display = "Consumable Locations"
+    range_start = 0
+    range_end = 50
+    default = 20
+
+class IncludeChallenges(Choice):
+    """Include challenges. If set to excluded, the challenge items will be progressive,
+    but the challenge completion locations will be filler."""
+    display_name = "Include Challenges"
+    option_include = 0
+    option_exclude = 1
+    option_remove = 2
 
 class IncludeGreedMode(Choice):
     """Whether to include greed/greedier mode. If disabled, the locations will be filler. If any type of Greed Mode
@@ -40,6 +60,11 @@ class IncludeGreedMode(Choice):
     option_greedier_mode_only = 2
     option_greed_and_greedier = 3
     default = 1
+
+class LockAllItems(Toggle):
+    """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
+    trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
+    display_name = "Lock All Items"
 
 class StartingCharacter(Choice):
     """The character that you start with."""
@@ -85,6 +110,9 @@ class TBOIOptions(PerGameCommonOptions):
     max_babies: MaxBabies
     baby_ratio_required: BabyRatioRequired
     lock_all_items: LockAllItems
+    starting_character: StartingCharacter
+    shop_donations: ShopDonations
+    greed_donations: GreedDonations
+    consumable_locations: ConsumableLocations
     include_greed_mode: IncludeGreedMode
     include_challenges: IncludeChallenges
-    starting_character: StartingCharacter

@@ -1,3 +1,4 @@
+from math import floor
 from typing import NamedTuple, Optional
 
 from BaseClasses import LocationProgressType
@@ -1793,12 +1794,12 @@ def locations_data(player: Optional[int]):
 
     # Add extra locations
     for i in range(50):
-
+        region = ap_location_regions[floor((i/50) * len(ap_location_regions))]
 
         locs.append(LocationData("Shop Donation ({i}x)".format(i=i+1), 1086 + i, "Chapter 1", ['AP', 'Shop_Donation'], 1, LocationProgressType.DEFAULT, True,
-                     lambda s: True))
+                     lambda s: s.can_reach_region(region, p)))
         locs.append(LocationData("Greed Donation ({i}x)".format(i=i+1), 1287 + i, "Greed Mode", ['AP', 'Greed_Donation'], 1, LocationProgressType.DEFAULT,
-                     True, lambda s: True))
-        locs.append(LocationData("AP Consumable ({i}x)".format(i=i+1), 1488 + i, "Chapter 1", ['AP'], 1, LocationProgressType.DEFAULT, True, lambda s: True))
+                     True, lambda s: s.can_reach_region(region, p)))
+        locs.append(LocationData("AP Consumable ({i}x)".format(i=i+1), 1488 + i, "Chapter 1", ['AP'], 1, LocationProgressType.DEFAULT, True, lambda s: s.can_reach_region(region, p)))
 
     return locs

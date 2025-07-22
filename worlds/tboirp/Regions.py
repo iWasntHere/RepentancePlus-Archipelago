@@ -49,8 +49,8 @@ def make_regions(world: "TBOIWorld", location_data: list[LocationData]):
 
         "Blue Womb":                        TBOIRegionData(["Sheol", "Cathedral", "The Void"]),
 
-        "Sheol":                            TBOIRegionData(["Dark Room"]),
-        "Cathedral":                        TBOIRegionData(["The Chest"]),
+        "Sheol":                            TBOIRegionData(["Dark Room", "Chapter 5"]),
+        "Cathedral":                        TBOIRegionData(["The Chest", "Chapter 5"]),
 
         "Dark Room":                        TBOIRegionData(["Chapter 6"]),
         "The Chest":                        TBOIRegionData(["Chapter 6"]),
@@ -68,6 +68,7 @@ def make_regions(world: "TBOIWorld", location_data: list[LocationData]):
         "Chapter 3":                        TBOIRegionData(["The Womb", "Utero", "Scarred Womb", "Mausoleum", "Gehenna", "Ascent"]),
         "Chapter 3.5":                      TBOIRegionData(["The Womb", "Utero", "Scarred Womb", "Corpse"]),
         "Chapter 4":                        TBOIRegionData(["Sheol", "Cathedral", "Blue Womb"]),
+        "Chapter 5":                        TBOIRegionData(),
         "Chapter 6":                        TBOIRegionData(["Mega Satan"]),
 
         "Greed Mode":                       TBOIRegionData(),

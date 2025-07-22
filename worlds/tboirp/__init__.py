@@ -5,6 +5,7 @@ from worlds.AutoWorld import World, WebWorld
 from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool
 from .Items_Data import items_data
 from .Locations import make_locations, LocationData
+from .Locations_Data import locations_data
 from .Options import TBOIOptions
 from .Regions import make_regions
 from .Rules import make_rules
@@ -36,10 +37,9 @@ class TBOIWorld(World):
     options: TBOIOptions
 
     starting_character_item: str
-    default_items: list[str]
 
     item_name_to_id = {item[0]: item[1].code for item in items_data.items()}
-    location_name_to_id = {location.name: location.code for location in make_locations(None)}
+    location_name_to_id = {location.name: location.code for location in locations_data(None)}
 
     usable_items: Dict[str, ItemData] # Items that will appear in the multiworld
     default_items: Dict[str, ItemData] # Items that start unlocked for the player
@@ -61,8 +61,6 @@ class TBOIWorld(World):
         for name, data in items_table.items():
             for i in range(data.amount): # In case we have multiple copies
                 self.multiworld.itempool.append(TBOIItem(self.player, name, data))
-
-        print("Done")
 
     def create_regions(self):
         make_regions(self, make_locations(self))

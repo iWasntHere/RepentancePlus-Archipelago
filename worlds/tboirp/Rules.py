@@ -84,6 +84,7 @@ def make_rules(world: "TBOIWorld"):
     set_region_access_rule(mw, ply, "Corpse", lambda state: state.has_all(["A Secret Exit"], ply))
 
     set_region_access_rule(mw, ply, "The Womb", lambda state: state.has("The Womb", ply))
+    set_region_access_rule(mw, ply, "Utero", lambda state: state.has("The Womb", ply))
     set_region_access_rule(mw, ply, "Scarred Womb", lambda state: state.has_all(["The Womb", "Scarred Womb"], ply))
 
     set_region_access_rule(mw, ply, "Blue Womb", lambda state: state.has("Blue Womb", ply))

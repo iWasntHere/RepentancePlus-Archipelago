@@ -1,8 +1,10 @@
 from math import floor
-from typing import Optional, NamedTuple, Dict, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 
 from BaseClasses import ItemClassification, Item
-from .Items_Data import ItemData, items_data
+from .Items_Data import ItemData, items_data, Pool
+
+from .Items_Data import TBOIPoolEntry
 
 if TYPE_CHECKING:
     from . import TBOIWorld
@@ -37,8 +39,6 @@ items. *These* items will actually be used in the Archipelago world (not unlocke
 """
 def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_locations_count: int, exclude_items: list[str]) -> Dict[str, ItemData]:
     print("Need to generate {count} items".format(count=location_count))
-
-    bup = location_count
 
     # If we're in Baby Hunt, pick some babies to make Progressive
     if world.options.game_mode.option_baby_hunt:
@@ -108,10 +108,6 @@ def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_lo
     for name, data in items_to_use.items():
         total += data.amount
 
-    print(total)
-    print(bup)
-    print(bup - total)
-
     return items_to_use
 
 """
@@ -119,14 +115,52 @@ Just sets an item's classification in the items table.
 """
 def set_item_classification(name: str, classification: ItemClassification):
     data = items_data[name]
-    items_data[name] = ItemData(data.code, classification, data.categories, data.achievement, data.internal_id, data.amount, data.quality)
+    items_data[name] = ItemData(data.code, classification, data.categories, data.achievement, data.internal_id, data.amount, data.quality, data.pools)
 
 """
 Adds 1 copy of the item to the pool
 """
 def add_count_to_item(name: str, amount_to_add: int):
     data = items_data[name]
-    items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.internal_id, data.amount + amount_to_add, data.quality)
+    items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.internal_id, data.amount + amount_to_add, data.quality, data.pools)
+
+"""
+Sets the item's pools
+"""
+def set_pools_to_item(name: str, pools: list[Pool]):
+    data = items_data[name]
+    items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.internal_id, data.amount, data.quality, pools)
+
+# TODO: Make this shuffle greed mode separately (ideally)
+def do_pool_rando_shuffle(world: "TBOIWorld"):
+    collectibles: dict[str, ItemData] = {name: data for name, data in items_data.items() if "Item" in data.categories[0] and len(data.pools) > 0}
+
+    pool_pool: list[Pool] = [] # This is hilarious
+    for name, data in collectibles.items():
+        pool_pool.extend(data.pools)
+
+    world.random.shuffle(pool_pool) # Shuffle em
+
+    returned_pools: dict[str, list[TBOIPoolEntry]] = {} # These will be set in the world's data
+
+    # Do shuffle
+    for name, data in collectibles.items():
+        num_of_pools = len(data.pools)
+
+        new_pools: list[Pool] = []
+
+        for _ in range(num_of_pools):
+            entry = pool_pool.pop()
+            new_pools.append(entry)
+
+            # Set in world data
+            returned_pools.setdefault(entry.pool, []).append(TBOIPoolEntry(data.internal_id, entry.weight))
+
+        # Set in items table
+        set_pools_to_item(name, new_pools)
+
+    return returned_pools
+
 
 
 

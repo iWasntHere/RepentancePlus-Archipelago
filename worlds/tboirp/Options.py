@@ -73,6 +73,15 @@ class LockAllItems(Toggle):
     trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
     display_name = "Lock All Items"
 
+class PoolRando(Choice):
+    """All item pools will be shuffled. If set to shuffle, then all items will be distributed into random pools,
+    but have the same number of pool entries as normal. If set to chaos, then items can be in any number of pools,
+    without rules."""
+    display_name = "Pool Rando"
+    option_off = 0
+    option_shuffle = 1
+    option_chaos = 2
+
 class StartingCharacter(Choice):
     """The character that you start with."""
     display_name = "Starting Character"
@@ -117,6 +126,7 @@ class TBOIOptions(PerGameCommonOptions):
     max_babies: MaxBabies
     baby_ratio_required: BabyRatioRequired
     lock_all_items: LockAllItems
+    pool_rando: PoolRando
     starting_character: StartingCharacter
     shop_donations: ShopDonations
     greed_donations: GreedDonations

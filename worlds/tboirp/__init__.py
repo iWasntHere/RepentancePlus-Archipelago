@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, ClassVar
 
 from BaseClasses import Item, Tutorial, LocationProgressType
 from worlds.AutoWorld import World, WebWorld
@@ -6,10 +6,25 @@ from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items
 from .Items_Data import items_data
 from .Locations import make_locations, LocationData
 from .Locations_Data import locations_data
+from .Mod import generate_mod
 from .Options import TBOIOptions
 from .Regions import make_regions
 from .Rules import make_rules
+from .Settings import TBOISettings
+from ..LauncherComponents import Type, Component, components, launch as launch_component, icon_paths
 
+
+def launch_client():
+    from .Client import launch
+    launch_component(launch, name="TBOIClient")
+
+
+components.append(Component(
+    "The Binding of Isaac: Repentance+ Client", "TBOIClient", func=launch_client, component_type=Type.CLIENT,
+    description="Client for The Binding of Isaac: Repentance+", icon="TBOIClient"
+))
+
+icon_paths["TBOIClient"] = f"ap:{__name__}/assets/icon.png"
 
 class TBOIWebWorld(WebWorld):
     theme = 'dirt'
@@ -32,6 +47,7 @@ class TBOIWorld(World):
     game = "The Binding of Isaac: Repentance+"
     topology_present = False
     web = TBOIWebWorld()
+    settings: ClassVar[TBOISettings]
 
     options_dataclass = TBOIOptions
     options: TBOIOptions
@@ -48,6 +64,8 @@ class TBOIWorld(World):
         "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
 
+    generate_output = generate_mod
+
     def set_rules(self):
         make_rules(self)
 
@@ -63,7 +81,7 @@ class TBOIWorld(World):
                 self.multiworld.itempool.append(TBOIItem(self.player, name, data))
 
     def create_regions(self):
-        make_regions(self, make_locations(self))
+        make_regions(self, [data for data in make_locations(self) if data.progress_type is not None])
 
     def get_filler_item_name(self) -> str:
         if self.random.random() < 0.25:
@@ -79,7 +97,8 @@ class TBOIWorld(World):
 
         # Kind of a bad hack, but we need to know how many locations are going to be local so
         # we know how many items to add to the pool.
-        locations = make_locations(self)
+        locations = [data for data in make_locations(self) if data.progress_type is not None]
 
-        self.usable_items = generate_items_for_pool(self, len(locations), len([data.name for data in locations if data.progress_type != LocationProgressType.EXCLUDED]), excluded_items)
+        self.usable_items = generate_items_for_pool(self, len(locations) - 1, len([data.name for data in locations if data.progress_type != LocationProgressType.EXCLUDED]), excluded_items)
         self.default_items = {name: data for name, data in items_data.items() if name not in self.usable_items}
+

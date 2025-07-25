@@ -1,0 +1,8 @@
+<metadata>
+	<name>{{ mod_formal_name }}</name>
+	<directory>{{ mod_dir_name }}</directory>
+	<description/>
+	<version>1.0</version>
+	<visibility/>
+</metadata>
+

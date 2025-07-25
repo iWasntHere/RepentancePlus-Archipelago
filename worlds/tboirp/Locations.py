@@ -33,8 +33,10 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
 
      # Exclude some locations
     greed_value = world.options.include_greed_mode.value
-    challenge_value = world.options.include_challenges
+    challenge_value = world.options.include_challenges.value
+    repetitious_value = world.options.include_repetitious.value
     for location in locations:
+
         # Edit challenges
         if "Challenge" in location.categories:
             if challenge_value == world.options.include_challenges.option_exclude: # Exclude
@@ -51,6 +53,13 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
                 continue
 
             exclude_location(locations, location)
+
+        # If we are excluding/removing repetitious locations
+        if repetitious_value != world.options.include_repetitious.option_include and location.repetitions > 1:
+            if repetitious_value == world.options.include_repetitious.option_exclude: # Exclude
+                exclude_location(locations, location)
+            elif repetitious_value == world.options.include_repetitious.option_remove: # Remove
+                remove_location(locations, location)
 
     # Remove any superfluous AP locations
     remove_ap_locations(locations, "Shop Donation", world.options.shop_donations.value, 50)
@@ -84,7 +93,9 @@ def exclude_location(locations: list[LocationData], data: LocationData):
 Entirely removes a location
 """
 def remove_location(locations: list[LocationData], data: LocationData):
-    locations.remove(data)
+    index = locations.index(data)
+
+    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, None, data.custom, data.access_rule)
 
 """
 Sets a location's access rule

@@ -119,14 +119,14 @@ Just sets an item's classification in the items table.
 """
 def set_item_classification(name: str, classification: ItemClassification):
     data = items_data[name]
-    items_data[name] = ItemData(data.code, classification, data.categories, data.achievement, data.amount, data.quality)
+    items_data[name] = ItemData(data.code, classification, data.categories, data.achievement, data.internal_id, data.amount, data.quality)
 
 """
 Adds 1 copy of the item to the pool
 """
 def add_count_to_item(name: str, amount_to_add: int):
     data = items_data[name]
-    items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.amount + amount_to_add, data.quality)
+    items_data[name] = ItemData(data.code, data.classification, data.categories, data.achievement, data.internal_id, data.amount + amount_to_add, data.quality)
 
 
 

@@ -61,6 +61,13 @@ class IncludeGreedMode(Choice):
     option_greed_and_greedier = 3
     default = 1
 
+class IncludeRepetitiousLocations(Choice):
+    """Whether to include 'repetitious' locations (IE 'Break 100 Tinted Rocks')."""
+    display_name = "Include Repetitious Locations"
+    option_include = 0
+    option_exclude = 1
+    option_remove = 2
+
 class LockAllItems(Toggle):
     """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
     trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
@@ -116,3 +123,4 @@ class TBOIOptions(PerGameCommonOptions):
     consumable_locations: ConsumableLocations
     include_greed_mode: IncludeGreedMode
     include_challenges: IncludeChallenges
+    include_repetitious: IncludeRepetitiousLocations

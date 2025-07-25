@@ -2,8 +2,9 @@ from typing import Dict, ClassVar
 
 from BaseClasses import Item, Tutorial, LocationProgressType
 from worlds.AutoWorld import World, WebWorld
-from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool
-from .Items_Data import items_data
+from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool, \
+    do_pool_rando_shuffle
+from .Items_Data import items_data, TBOIPoolEntry
 from .Locations import make_locations, LocationData
 from .Locations_Data import locations_data
 from .Mod import generate_mod
@@ -60,6 +61,8 @@ class TBOIWorld(World):
     usable_items: Dict[str, ItemData] # Items that will appear in the multiworld
     default_items: Dict[str, ItemData] # Items that start unlocked for the player
 
+    pool_rando: Dict[str, list[TBOIPoolEntry]] # Dict of pool name to pool entries
+
     item_name_groups = {
         "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
@@ -101,4 +104,10 @@ class TBOIWorld(World):
 
         self.usable_items = generate_items_for_pool(self, len(locations) - 1, len([data.name for data in locations if data.progress_type != LocationProgressType.EXCLUDED]), excluded_items)
         self.default_items = {name: data for name, data in items_data.items() if name not in self.usable_items}
+
+        pool_rando_value = self.options.pool_rando.value
+
+        if pool_rando_value:
+            if pool_rando_value == self.options.pool_rando.option_shuffle:
+                self.pool_rando = do_pool_rando_shuffle(self)
 

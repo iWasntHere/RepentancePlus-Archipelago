@@ -1,7 +1,8 @@
 import os
 import threading
 import zipfile
-from typing import TYPE_CHECKING, Optional, Union, Tuple, Callable, List, Any
+from typing import TYPE_CHECKING, Optional, Union, Tuple, Callable, List, Any, Dict
+import xml.etree.ElementTree as ET
 
 import jinja2
 
@@ -10,7 +11,7 @@ import worlds.Files
 
 template_load_lock = threading.Lock()
 
-from . import ItemData, items_data
+from . import ItemData, items_data, TBOIPoolEntry
 
 if TYPE_CHECKING:
     from . import TBOIWorld
@@ -75,6 +76,28 @@ def make_code_to_state_table():
 
     return table
 
+def make_pools_xml(pool_values: Dict[str, list[TBOIPoolEntry]]) -> str:
+    root = ET.Element("ItemPools")
+
+    # Create pool tags
+    for pool_name, pool_entries in pool_values.items():
+        pool = ET.Element("Pool")
+        pool.attrib["Name"] = pool_name
+
+        # Create item tags
+        for pool_entry in pool_entries:
+            entry = ET.Element("Item")
+
+            entry.attrib["Id"] = str(pool_entry.internal_item_id)
+            entry.attrib["Weight"] = str(pool_entry.weight)
+            entry.attrib["DecreaseBy"] = str(pool_entry.weight)
+            entry.attrib["RemoveOn"] = "0.1" # I don't think this really matters
+
+            pool.append(entry)
+
+        root.append(pool)
+
+    return ET.tostring(root, encoding="utf-8")
 
 def generate_mod(world: "TBOIWorld", output_directory: str):
     player = world.player
@@ -134,5 +157,9 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
     mod.writing_tasks.append(lambda: ("main.lua", mainlua_template.render(**template_data)))
     mod.writing_tasks.append(lambda: ("incoming_ap_data.lua", ""))
     mod.writing_tasks.append(lambda: ("metadata.xml", metadata_template.render(**template_data)))
+
+    # If we're doing pool rando, generate an itempools.xml
+    if world.options.pool_rando.value != world.options.pool_rando.option_off:
+        mod.writing_tasks.append(lambda: ("resources/itempools.xml", make_pools_xml(world.pool_rando)))
 
     mod.write()

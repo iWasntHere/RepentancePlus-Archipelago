@@ -26,7 +26,7 @@ class LocationData(NamedTuple):
     region: str
     categories: list[str]
     repetitions: int # For locations where you need to do a task X number of times
-    progress_type: LocationProgressType
+    progress_type: Optional[LocationProgressType] # When None, don't parse to a Location
     custom: bool
     access_rule: CollectionRule
 

@@ -69,13 +69,6 @@ def make_item_states_table(world: "TBOIWorld"):
 
     return {**unlocked, **locked}
 
-def make_code_to_state_table():
-    table = {}
-    for name, data in items_data.items():
-        table[data.code] = get_item_key(name, data)
-
-    return table
-
 def make_pools_xml(pool_values: Dict[str, list[TBOIPoolEntry]]) -> str:
     root = ET.Element("ItemPools")
 
@@ -116,6 +109,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
 
             metadata_template = template_env.get_template("metadata.xml")
             mainlua_template = template_env.get_template("main.lua")
+            itemstateslua_template = template_env.get_template("item_states.lua")
 
     # Set template data
     mod_name = f"_Archipelago ({mw.get_file_safe_player_name(player)}) ({mw.seed_name})"
@@ -127,7 +121,6 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
         "seed_name": mw.seed_name,
         "slot_name": mw.get_player_name(player),
         "item_states": make_item_states_table(world),
-        "item_code_to_item_state_key": make_code_to_state_table(),
         "shop_donation_location_count": world.options.shop_donations.value,
         "greed_donation_location_count": world.options.greed_donations.value,
         "consumable_location_count": world.options.consumable_locations.value
@@ -155,6 +148,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
 
     # All files go in the root of the zip
     mod.writing_tasks.append(lambda: ("main.lua", mainlua_template.render(**template_data)))
+    mod.writing_tasks.append(lambda: ("item_states.lua", itemstateslua_template.render(**template_data)))
     mod.writing_tasks.append(lambda: ("incoming_ap_data.lua", ""))
     mod.writing_tasks.append(lambda: ("metadata.xml", metadata_template.render(**template_data)))
 

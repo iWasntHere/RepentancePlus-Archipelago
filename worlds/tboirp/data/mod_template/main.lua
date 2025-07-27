@@ -17,6 +17,22 @@ mod.itemStates = require("item_states")
 local saveState = nil
 local FOREIGN_ITEM = -100
 
+-- For saving data persistently
+function mod:SaveKey(key, value)
+	saveState.save[key] = value
+end
+
+-- For loading data persistently!
+function mod:LoadKey(key, default)
+	local val = saveState.save[key]
+
+	if val == nil then
+		return default
+	end
+
+	return val
+end
+
 -- Load the save file first, so we know what we've processed (or make a new save if we don't have one yet)
 -- This is high priority so it runs before the base mod can remove items from the pool
 mod:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.IMPORTANT, function(continued)

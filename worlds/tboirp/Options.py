@@ -70,11 +70,13 @@ class IncludeRepetitiousLocations(Choice):
 
 class LockAllItems(Toggle):
     """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
-    trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default."""
+    trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default.
+    This means you may start with a 'default' selection items different from Vanilla (Sad Onion may start locked, and
+    Mom's Knife may start unlocked)!"""
     display_name = "Lock All Items"
 
 class PoolRando(Choice):
-    """All item pools will be shuffled. If set to shuffle, then all items will be distributed into random pools,
+    """If set to shuffle, all items will be distributed into random pools,
     but have the same number of pool entries as normal. If set to chaos, then items can be in any number of pools,
     without rules."""
     display_name = "Pool Rando"

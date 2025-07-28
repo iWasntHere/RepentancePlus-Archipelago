@@ -45,27 +45,9 @@ class TBOIModFile(worlds.Files.APPlayerContainer):
 
         super(TBOIModFile, self).write_contents(opened_zipfile)
 
-def get_item_key(name: str, data: ItemData) -> str:
-    """
-    Returns a key for an item when it is unlocked by default.
-    Items that have an internal id for quick lookup (collectibles, trinkets, etc)
-    will be in the format Type-InternalID
-    Items that lack an internal ID will just be the name of the item (e.g. The Cellar)
-    """
-
-    if data.internal_id is not None:
-        cat = data.categories[0]
-
-        if cat in ["Tarot", "Suit", "Rune", "Reverse", "Special", "Object"]:
-            cat = "Card"
-
-        return f"{cat}-{data.internal_id}"
-
-    return name
-
 def make_item_states_table(world: "TBOIWorld"):
-    unlocked = {get_item_key(name, data): True for name, data in world.default_items.items()}
-    locked = {get_item_key(name, data): False for name, data in world.usable_items.items()}
+    unlocked = {data.code: True for name, data in world.default_items.items()}
+    locked = {data.code: False for name, data in world.usable_items.items()}
 
     return {**unlocked, **locked}
 

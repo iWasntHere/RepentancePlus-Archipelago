@@ -46,9 +46,8 @@ mod:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.IMPO
 	-- Use items' state keys to mark them as unlocked
 	for key, itemCode in pairs(saveState.processed_items) do
 		if itemCode ~= FOREIGN_ITEM then -- Make sure this item is actually for us
-			-- Mark item as unlocked
-			stateKey = AP_MAIN_MOD.ITEMS_DATA[itemCode].key
-			mod.itemStates[stateKey] = true
+			-- Mark item as unlocked (item codes are strings)
+			mod.itemStates[tostring(itemCode)] = true
 		end
 	end
 end)
@@ -59,13 +58,22 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 		return
 	end
 
-	if Isaac.GetFrameCount() % 180 ~= 0 then -- Only do this every few seconds
+	if Isaac.GetFrameCount() % 60 ~= 0 then -- Only do this once every second
 		return
 	end
 
-	incoming_data = include("incoming_ap_data")
-	data = json.decode(incoming_data)
-	needsToSave = false
+	local incoming_data = ""
+	local data = {}
+
+	-- Catch any errors in case there's an issue with file handles
+	if not pcall(function ()
+		incoming_data = include("incoming_ap_data")
+		data = json.decode(incoming_data)
+	end) then
+		return
+	end
+
+	local needsToSave = false
 
 	-- Now, we compare the "new" data with the saved data.
 	-- Diffs are acted upon and the save is updated
@@ -74,9 +82,8 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 			if receive_data.is_for_me then -- We are receiving this item
 				saveState.processed_items[key] = receive_data.item_code -- Mark it as so (by using its item code)
 
-				-- Set the item as unlocked
-				stateKey = AP_MAIN_MOD.ITEMS_DATA[receive_data.item_code].key
-				mod.itemStates[stateKey] = true
+				-- Set the item as unlocked (item codes are strings)
+				mod.itemStates[tostring(receive_data.item_code)] = true
 
 				Isaac.RunCallback(ArchipelagoModCallbacks.MC_ARCHIPELAGO_ITEM_RECEIVED, receive_data.item_name, receive_data.player_name, receive_data.location_name, false)
 			else

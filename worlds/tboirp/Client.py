@@ -169,7 +169,8 @@ async def handle_receiving_items(ctx: TBOIContext):
                                                       location_code=data.location): {
             "item_name": ctx.item_names.lookup_in_slot(data.item, ctx.slot),
             "player_name": ctx.player_names[data.player],
-            "location_name": ctx.location_names.lookup_in_slot(data.location, data.player), "item_code": data.item,
+            "location_name": ctx.location_names.lookup_in_slot(data.location, data.player),
+            "item_code": data.item,
             "is_for_me": True
         }
         for data
@@ -182,7 +183,8 @@ async def handle_receiving_items(ctx: TBOIContext):
                                                       location_code=data.location): {
             "item_name": ctx.item_names.lookup_in_slot(data.item, data.to_player),
             "player_name": ctx.player_names[data.to_player],
-            "location_name": ctx.location_names.lookup_in_slot(data.location, data.from_player), "item_code": data.item,
+            "location_name": ctx.location_names.lookup_in_slot(data.location, data.from_player),
+            "item_code": data.item,
             "is_for_me": False
         }
         for data

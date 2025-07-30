@@ -104,7 +104,7 @@ class TBOIContext(CommonContext):
         await self.send_connect()
 
     def on_package(self, cmd: str, args: dict):
-        if cmd == "PrintJSON" and args["type"] == "ItemSend": # Log items that we've sent out
+        if cmd == "PrintJSON" and "type" in args and args["type"] == "ItemSend": # Log items that we've sent out
             item: NetworkItem = args["item"]
             receiving_slot = args["receiving"]
 

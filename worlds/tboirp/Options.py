@@ -69,7 +69,7 @@ class IncludeRepetitiousLocations(Choice):
     option_remove = 2
 
 class LockAllItems(Toggle):
-    """All items will be locked and placed into the multiworld, even if they are locked by default. This includes
+    """All items will be locked and placed into the multiworld, even if they are unlocked by default. This includes
     trinkets, cards, and pills. Items that fail to generate in the multiworld will be unlocked by default.
     This means you may start with a 'default' selection items different from Vanilla (Sad Onion may start locked, and
     Mom's Knife may start unlocked)!"""

@@ -63,6 +63,8 @@ class TBOIWorld(World):
 
     pool_rando: Dict[str, list[TBOIPoolEntry]] # Dict of pool name to pool entries
 
+    babies: list[int] # Baby item codes that were chosen to be included in baby hunt
+
     item_name_groups = {
         "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
@@ -104,6 +106,12 @@ class TBOIWorld(World):
 
         self.usable_items = generate_items_for_pool(self, len(locations) - 1, len([data.name for data in locations if data.progress_type != LocationProgressType.EXCLUDED]), excluded_items)
         self.default_items = {name: data for name, data in items_data.items() if name not in self.usable_items}
+
+        # For baby hunt, save a list of the babies we need to find, so we can give it to the client
+        if self.options.game_mode.value == self.options.game_mode.option_baby_hunt:
+            self.babies = [item.code for name, item in self.usable_items.items() if item.categories[0] == "Co-Op_Baby"]
+        else:
+            self.babies = []
 
         pool_rando_value = self.options.pool_rando.value
 

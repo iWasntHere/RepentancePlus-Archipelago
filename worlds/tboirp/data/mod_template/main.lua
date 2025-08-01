@@ -1,4 +1,4 @@
-{% from "macros.lua" import dict_to_lua %}
+{% from "macros.lua" import list_to_lua %}
 
 local json = require("json")
 local mod = RegisterMod("{{ mod_formal_name }}", 1)
@@ -11,6 +11,7 @@ ARCHIPELAGO_SLOT = "{{ slot_name }}"
 SHOP_DONATION_LOCATION_COUNT = {{ shop_donation_location_count }}
 GREED_DONATION_LOCATION_COUNT = {{ greed_donation_location_count }}
 CONSUMABLE_LOCATION_COUNT = {{ consumable_location_count }}
+TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
 
 mod.itemStates = require("item_states")
 
@@ -20,6 +21,7 @@ local FOREIGN_ITEM = -100
 -- For saving data persistently
 function mod:SaveKey(key, value)
 	saveState.save[key] = value
+	mod:SaveData(json.encode(saveState))
 end
 
 -- For loading data persistently!

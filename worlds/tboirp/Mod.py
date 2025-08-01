@@ -105,7 +105,8 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
         "item_states": make_item_states_table(world),
         "shop_donation_location_count": world.options.shop_donations.value,
         "greed_donation_location_count": world.options.greed_donations.value,
-        "consumable_location_count": world.options.consumable_locations.value
+        "consumable_location_count": world.options.consumable_locations.value,
+        "target_baby_codes": world.babies
     }
 
     # Create the .zip

@@ -27,8 +27,9 @@ Follow the steps for connecting. The client should prevent you from connecting i
 
 ## Helpful Features
 
-Hold the backslash key (\ or |) to bring up an in-game item tracker page. While holding this key, use \[ and \] to
-scroll between pages. This helps you know which items are available to your game.
+Hold the backslash key (\ or |) to bring up an in-game item tracker page. While holding this key, use
+ENTER and RIGHT SHIFT to scroll the pages up and down, and use \[ and \] to
+scroll left and right. This helps you know which items are available to your game.
 
 ## Known Issues
 

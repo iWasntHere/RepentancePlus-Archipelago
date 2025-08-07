@@ -35,25 +35,6 @@ function mod:LoadKey(key, default)
 	return val
 end
 
--- Load the save file first, so we know what we've processed (or make a new save if we don't have one yet)
--- This is high priority so it runs before the base mod can remove items from the pool
-mod:AddPriorityCallback(ModCallbacks.MC_POST_GAME_STARTED, CallbackPriority.IMPORTANT, function(continued)
-	if not mod:HasData() then
-		saveState = {save = {}, processed_items = {}}
-		return
-	end
-
-	saveState = json.decode(mod:LoadData())
-
-	-- Use items' state keys to mark them as unlocked
-	for key, itemCode in pairs(saveState.processed_items) do
-		if itemCode ~= FOREIGN_ITEM then -- Make sure this item is actually for us
-			-- Mark item as unlocked (item codes are strings)
-			mod.itemStates[tostring(itemCode)] = true
-		end
-	end
-end)
-
 -- Load the input data file so we can get updated from the Archipelago server
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	if not saveState then
@@ -105,5 +86,16 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	end
 
 end)
+
+-- Load the save data after the rest of the mod has initialised
+saveState = json.decode(mod:LoadData())
+
+-- Use items' state keys to mark them as unlocked
+for key, itemCode in pairs(saveState.processed_items) do
+	if itemCode ~= FOREIGN_ITEM then -- Make sure this item is actually for us
+		-- Mark item as unlocked (item codes are strings)
+		mod.itemStates[tostring(itemCode)] = true
+	end
+end
 
 AP_SUPP_MOD = mod

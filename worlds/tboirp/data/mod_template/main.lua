@@ -26,6 +26,10 @@ end
 
 -- For loading data persistently!
 function mod:LoadKey(key, default)
+    if not saveState then
+        return default
+    end
+
 	local val = saveState.save[key]
 
 	if val == nil then
@@ -86,6 +90,12 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	end
 
 end)
+
+-- Generate a blank save file if one does not exist
+if not mod:HasData() then
+	saveState = {save = {}, processed_items = {}}
+	return
+end
 
 -- Load the save data after the rest of the mod has initialised
 saveState = json.decode(mod:LoadData())

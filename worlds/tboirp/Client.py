@@ -40,6 +40,8 @@ class TBOIContext(CommonContext):
     game_output_file_path: str # The file that will be scanned for outgoing messages from the game, then deleted (the primary mod)
     game_input_file_path: Optional[str] # The file that will be written to pass data to the game (the supplemental mod)
 
+    must_update_file: bool # 'True' when the incoming_ap_data.lua file must be written
+
     def __init__(self, server_address, password, game_directory: str, save_slot: int):
         super().__init__(server_address, password)
 
@@ -49,6 +51,8 @@ class TBOIContext(CommonContext):
         self.game_output_file_path = os.path.join(game_directory, "data", "archipelago", "save{slot}.dat".format(slot=save_slot))
         self.game_input_file_path = None
         self.items_sent = []
+
+        self.must_update_file = True
 
     def run_gui(self):
         from kvui import GameManager
@@ -107,6 +111,10 @@ class TBOIContext(CommonContext):
         if cmd == "PrintJSON" and "type" in args and args["type"] == "ItemSend": # Log items that we've sent out
             item: NetworkItem = args["item"]
             receiving_slot = args["receiving"]
+
+            # We either sent or received the item, so we'll need to inform the game
+            if item.player == self.slot or receiving_slot == self.slot:
+                self.must_update_file = True
 
             # We didn't send this item, or this item is for us... we only care about things WE send OUT
             if item.player != self.slot or receiving_slot == self.slot:
@@ -211,7 +219,11 @@ async def progression_watcher(ctx: TBOIContext):
             ctx.game_input_file_path = os.path.join(ctx.game_directory, "mods", f"_AP-TBOIRP-{ctx.seed_name}-{ctx.slot_info[ctx.slot].name}", "incoming_ap_data.lua".format(slot=ctx.save_slot))
 
         await handle_sending_locations(ctx)
-        await handle_receiving_items(ctx)
+
+        # If we need to inform the game, then do so
+        if ctx.must_update_file:
+            ctx.must_update_file = False
+            await handle_receiving_items(ctx)
 
         await asyncio.sleep(1)
 

@@ -12,11 +12,7 @@ class TBOILocation(Location):
     game = "The Binding of Isaac: Repentance+"
 
     def __init__(self, player: int, data: LocationData, region: Region):
-        name = data.name
-        if data.repetitions > 1:
-            name = "{name} ({repeats}x)".format(name = data.name, repeats = data.repetitions)
-
-        super().__init__(player, name, data.code, region)
+        super().__init__(player, data.full_name(), data.code, region)
         self.access_rule = data.access_rule
         self.progress_type = data.progress_type
 

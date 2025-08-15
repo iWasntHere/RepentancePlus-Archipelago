@@ -56,7 +56,7 @@ class TBOIWorld(World):
     starting_character_item: str
 
     item_name_to_id = {item[0]: item[1].code for item in items_data.items()}
-    location_name_to_id = {location.name: location.code for location in locations_data(None)}
+    location_name_to_id = {location.full_name(): location.code for location in locations_data(None)}
 
     usable_items: Dict[str, ItemData] # Items that will appear in the multiworld
     default_items: Dict[str, ItemData] # Items that start unlocked for the player

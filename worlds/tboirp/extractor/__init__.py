@@ -277,18 +277,20 @@ def make_location_data_python():
 
             rule_value = row[5]
 
+            character = '"' + row[8] + '"' if row[8] != "" else None
+
             if rule_value == "":
                 rule = "lambda s: True"
             else:
-                if rule_value.startswith("$"):
-                    rule = rule.format(rule=rule_value[1:])
-                    rule = rule.replace("has(", "s.has(")
-                    rule = rule.replace("has_any(", "s.has_any(")
-                    rule = rule.replace("has_all(", "s.has_all(")
+                if not rule_value.startswith("s") and not rule_value.startswith("logic"):
+                    if rule_value == "Lost": # 'Lost' requirement might mean we need Holy Mantle
+                        rule = rule.format(rule="logic.has_the_lost(s)")
+                    else: # It's a single item as the access rule
+                        rule = rule.format(rule='s.has("{val}", p)'.format(val=rule_value))
                 else:
-                    rule = rule.format(rule='s.has("{val}", p)'.format(val=rule_value))
+                    rule = rule.format(rule=rule_value)
 
-            line = 'LocationData("{name}", {code}, "{region}", {categories}, {repeats}, {progress_type}, {custom}, {rule})'.format(
+            line = 'LocationData("{name}", {code}, "{region}", {categories}, {repeats}, {progress_type}, {custom}, {character}, {rule})'.format(
                 name=name,
                 code=code,
                 region=region,
@@ -296,6 +298,7 @@ def make_location_data_python():
                 categories=split_cats,
                 custom=custom,
                 progress_type=progress,
+                character=character,
                 rule=rule
             )
 

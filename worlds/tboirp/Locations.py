@@ -21,7 +21,7 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
     babies = world.options.max_babies
     baby_ratio = world.options.baby_ratio_required
 
-    locations = locations_data(world.player)
+    locations = locations_data(world)
 
     # Set location access rule for co-op baby victory
     set_location_access_rule(locations, [data for data in locations if data.name == "Victory (Baby Hunt)"][0],
@@ -34,6 +34,7 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
     repetitious_value = options.include_repetitious.value
     bossanity_value = options.bossanity.value
     chapter_completionsanity_value = options.chapter_completionsanity.value
+    char_exclusions = options.exclude_characters.get_excluded_characters()
     for location in locations:
 
         # Challenges!!!
@@ -74,6 +75,10 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
             elif chapter_completionsanity_value == options.chapter_completionsanity.option_on_filler: # Remove
                 remove_location(locations, location)
 
+        # Character exclusions
+        if location.character in char_exclusions:
+            exclude_location(locations, location)
+
     # Remove any superfluous AP locations
     remove_ap_locations(locations, "Shop Donation", options.shop_donations.value, 50)
     remove_ap_locations(locations, "Greed Donation", options.greed_donations.value, 50)
@@ -98,9 +103,12 @@ def remove_ap_locations(locations: list[LocationData], starts_with: str, past: i
 Sets a location to "EXCLUDED" (Only filler)
 """
 def exclude_location(locations: list[LocationData], data: LocationData):
-    index = locations.index(data)
+    try:
+        index = locations.index(data)
 
-    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, LocationProgressType.EXCLUDED, data.custom, data.access_rule)
+        locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, LocationProgressType.EXCLUDED, data.custom, data.character, data.access_rule)
+    except ValueError:
+        pass # This is fine, just means the location was removed
 
 """
 Entirely removes a location
@@ -108,7 +116,7 @@ Entirely removes a location
 def remove_location(locations: list[LocationData], data: LocationData):
     index = locations.index(data)
 
-    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, None, data.custom, data.access_rule)
+    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, None, data.custom, data.character, data.access_rule)
 
 """
 Sets a location's access rule
@@ -116,4 +124,4 @@ Sets a location's access rule
 def set_location_access_rule(locations: list[LocationData], data: LocationData, rule: CollectionRule):
     index = locations.index(data)
 
-    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, data.progress_type, data.custom, rule)
+    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, data.progress_type, data.custom, data.character, rule)

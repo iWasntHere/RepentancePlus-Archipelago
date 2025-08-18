@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
-from Options import Range, Toggle, Choice, PerGameCommonOptions
+from Options import Range, Toggle, Choice, PerGameCommonOptions, FreeText
+
 
 class GameMode(Choice):
     """
@@ -176,6 +177,36 @@ class StartingCharacter(Choice):
     option_tainted_jacob = 33
     default = 0
 
+class ExcludeCharacters(FreeText):
+    """
+    Exclude an entire character's locations. This will make it so ALL checks that require playing the character are
+    filler. This includes challenges, completion marks, and chapter completionsanity.
+
+    Must be formatted as "Character Name 1, Character Name 2, Character Name 3" and so on.
+
+    Allowed values:
+    Isaac, Tainted Isaac, Magdalene, Tainted Magdalene, Cain, Tainted Cain, Judas, Tainted Judas, ???, Tainted ???,
+    Eve, Tainted Eve, Samson, Tainted Samson, Lazarus, Tainted Lazarus, Azazel, Tainted Azazel, Eden, Tainted Eden,
+    Lost, Tainted Lost, Lilith, Tainted Lilith, Keeper, Tainted Keeper, Apollyon, Tainted Apollyon,
+    Forgotten, Tainted Forgotten, Bethany, Tainted Bethany, Jacob and Esau, Tainted Jacob
+    """
+    display_name = "Exclude Characters"
+    default = "Tainted Cain, Tainted Lazarus, Tainted Lost, Jacob and Esau, Tainted Jacob"
+
+    def get_excluded_characters(self):
+        return [name.strip() for name in self.value.split(", ")]
+
+class LostDifficulty(Choice):
+    """
+    Whether the Lost logically needs its Holy Mantle starting upgrade to access any character-specific locations.
+    Hard: Lost's Holy Mantle is logically required
+    Impossible: Lost's Holy Mantle is not logically required
+    """
+    display_name = "Lost Difficulty"
+    option_hard = 0
+    option_impossible = 1
+    default = 0
+
 @dataclass
 class TBOIOptions(PerGameCommonOptions):
     game_mode: GameMode
@@ -184,6 +215,8 @@ class TBOIOptions(PerGameCommonOptions):
     lock_all_items: LockAllItems
     pool_rando: PoolRando
     starting_character: StartingCharacter
+    exclude_characters: ExcludeCharacters
+    lost_difficulty: LostDifficulty
     shop_donations: ShopDonations
     greed_donations: GreedDonations
     consumable_locations: ConsumableLocations

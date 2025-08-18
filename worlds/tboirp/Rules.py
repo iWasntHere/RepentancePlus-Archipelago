@@ -97,6 +97,8 @@ def make_rules(world: "TBOIWorld"):
 
     set_region_access_rule(mw, ply, "Mega Satan", lambda state: state.has("Angels", ply))
     set_region_access_rule(mw, ply, "The Void", lambda state: state.has("New Area", ply))
-    set_region_access_rule(mw, ply, "Ascent", lambda state: state.has("A Strange Door", ply) and state.has_any(["The Polaroid", "The Negative"], ply))
+
+    # Womb is required here because neither polaroid nor negative will properly drop without it
+    set_region_access_rule(mw, ply, "Ascent", lambda state: state.has("A Strange Door", ply) and state.has_any(["The Polaroid", "The Negative"], ply) and state.has("The Womb", ply))
 
     set_region_access_rule(mw, ply, "Greedier Mode", lambda state: state.has("Greedier!", ply))

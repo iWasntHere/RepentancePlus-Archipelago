@@ -72,6 +72,9 @@ function mod:LoadKey(key, default)
 	return val
 end
 
+-- Stores the length of the last read of incoming_ap_data. The JSON is decoded only when the length changes.
+local lastReadLength = 0
+
 -- Load the input data file so we can get updated from the Archipelago server
 mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	if Isaac.GetFrameCount() % 60 ~= 0 then -- Only do this once every second
@@ -86,6 +89,14 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	-- Catch any errors in case there's an issue with file handles
 	if not pcall(function ()
 		incoming_data = include("incoming_ap_data")
+
+		-- Don't do anything if the file isn't changed
+		local length = string.len(incoming_data)
+		if length == lastReadLength then
+			error("File is unchanged")
+		end
+
+		lastReadLength = length -- Record length for the next read
 		data = json.decode(incoming_data)
 	end) then
 		return

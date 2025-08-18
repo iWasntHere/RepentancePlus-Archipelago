@@ -28,39 +28,56 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
                              lambda s: s.has_group("Co-Op Baby", ply, floor(babies * (baby_ratio / 100))))
 
      # Exclude some locations
-    greed_value = world.options.include_greed_mode.value
-    challenge_value = world.options.include_challenges.value
-    repetitious_value = world.options.include_repetitious.value
+    options = world.options
+    greed_value = options.include_greed_mode.value
+    challenge_value = options.include_challenges.value
+    repetitious_value = options.include_repetitious.value
+    bossanity_value = options.bossanity.value
+    chapter_completionsanity_value = options.chapter_completionsanity.value
     for location in locations:
 
-        # Edit challenges
+        # Challenges!!!
         if "Challenge" in location.categories:
-            if challenge_value == world.options.include_challenges.option_exclude: # Exclude
+            if challenge_value == options.include_challenges.option_exclude: # Exclude
                 exclude_location(locations, location)
-            elif challenge_value == world.options.include_challenges.option_remove: # Remove
+            elif challenge_value == options.include_challenges.option_remove: # Remove
                 remove_location(locations, location)
 
         # No Greed Mode? (Insert Megamind image)
-        if greed_value != world.options.include_greed_mode.option_greed_and_greedier and (location.region in ["Greed Mode", "Greedier Mode"] or "All Marks" in location.categories):
-            if location.region == "Greed Mode" and greed_value == world.options.include_greed_mode.option_greed_mode_only:
+        if greed_value != options.include_greed_mode.option_greed_and_greedier and (location.region in ["Greed Mode", "Greedier Mode"] or "All Marks" in location.categories):
+            if location.region == "Greed Mode" and greed_value == options.include_greed_mode.option_greed_mode_only:
                 continue
 
-            if location.region == "Greedier Mode" and greed_value == world.options.include_greed_mode.option_greedier_mode_only:
+            if location.region == "Greedier Mode" and greed_value == options.include_greed_mode.option_greedier_mode_only:
                 continue
 
             exclude_location(locations, location)
 
         # If we are excluding/removing repetitious locations
-        if repetitious_value != world.options.include_repetitious.option_include and location.repetitions > 1:
-            if repetitious_value == world.options.include_repetitious.option_exclude: # Exclude
+        if repetitious_value != options.include_repetitious.option_include and location.repetitions > 1:
+            if repetitious_value == options.include_repetitious.option_exclude: # Exclude
                 exclude_location(locations, location)
-            elif repetitious_value == world.options.include_repetitious.option_remove: # Remove
+            elif repetitious_value == options.include_repetitious.option_remove: # Remove
+                remove_location(locations, location)
+
+        # Bossanity!
+        if bossanity_value != options.bossanity.option_on and location.categories[0] == "Boss_Clear" and location.custom:
+            if bossanity_value == options.bossanity.option_on_filler: # Exclude
+                exclude_location(locations, location)
+            elif bossanity_value == options.bossanity.option_on_filler: # Remove
+                remove_location(locations, location)
+
+        # Chapter Completionsanity!
+        if chapter_completionsanity_value != options.chapter_completionsanity.option_on and location.categories[0] == "Stage_Clear" and location.custom:
+            if chapter_completionsanity_value == options.chapter_completionsanity.option_on: # Exclude
+                exclude_location(locations, location)
+            elif chapter_completionsanity_value == options.chapter_completionsanity.option_on_filler: # Remove
                 remove_location(locations, location)
 
     # Remove any superfluous AP locations
-    remove_ap_locations(locations, "Shop Donation", world.options.shop_donations.value, 50)
-    remove_ap_locations(locations, "Greed Donation", world.options.greed_donations.value, 50)
-    remove_ap_locations(locations, "AP Consumable", world.options.consumable_locations.value, 50)
+    remove_ap_locations(locations, "Shop Donation", options.shop_donations.value, 50)
+    remove_ap_locations(locations, "Greed Donation", options.greed_donations.value, 50)
+    remove_ap_locations(locations, "AP Consumable", options.consumable_locations.value, 50)
 
     return locations
 

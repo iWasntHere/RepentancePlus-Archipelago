@@ -3,10 +3,14 @@ from dataclasses import dataclass
 from Options import Range, Toggle, Choice, PerGameCommonOptions
 
 class GameMode(Choice):
-    """Game mode. Only option is 'Baby Hunt,' where you must collect a certain number of Co-Op babies."""
+    """
+    Required goal.
+    Baby Hunt: Collect a percentage of Co-Op babies in the item pool to win.
+    Bounty Hunt: Unimplemented.
+    """
     display_name = "Game Mode"
     option_baby_hunt = 0
-    option_anything_else = 1
+    option_bounty_hunt = 1
     default = 0
 
 class MaxBabies(Range):
@@ -43,17 +47,55 @@ class ConsumableLocations(Range):
     range_end = 50
     default = 20
 
+class ChapterCompletionsanity(Choice):
+    """
+    Adds locations for clearing Chapter 4, and Chapter 5. Also adds a location for clearing each chapter with each
+    character.
+    Off: No additional locations are added.
+    On Filler: Locations are added as filler.
+    On: Locations are added and can contain any item.
+    """
+    display = "Chapter Completionsanity"
+    option_off = 0
+    option_on_filler = 1
+    option_on = 2
+    default = 0
+
+class Bossanity(Choice):
+    """
+    Adds locations for defeating each boss as any character once.
+    Note that this relies a lot on an undefeated boss spawning on a floor.
+    Off: No additional locations are added.
+    On Filler: Locations are added as filler.
+    On: Locations are added and can contain any item.
+    """
+    display = "Bossanity"
+    option_off = 0
+    option_on_filler = 1
+    option_on = 2
+    default = 0
+
 class IncludeChallenges(Choice):
-    """Include challenges. If set to excluded, the challenge items will be progressive,
-    but the challenge completion locations will be filler."""
+    """
+    Include challenges.
+    Include: Challenges will reward a check.
+    Exclude: Challenges will only reward filler.
+    Remove: Challenges will not be added as locations.
+    """
     display_name = "Include Challenges"
     option_include = 0
     option_exclude = 1
     option_remove = 2
+    default = 2
 
 class IncludeGreedMode(Choice):
-    """Whether to include greed/greedier mode. If disabled, the locations will be filler. If any type of Greed Mode
-    is excluded, then locations requiring all completion marks will be filler as well."""
+    """
+    Whether to include greed/greedier mode.
+    None: Don't include Greed Mode whatsoever.
+    Greed Mode Only: Locations for Greed Mode completions as characters will be added.
+    Greedier Mode Only: Locations for Greedier Mode completions as characters will be added.
+    Greed and Greedier: Locations for both Greed and Greedier Mode completions as characters will be added.
+    """
     display_name = "Include Greed(ier) Mode"
     option_none = 0
     option_greed_mode_only = 1
@@ -62,11 +104,17 @@ class IncludeGreedMode(Choice):
     default = 1
 
 class IncludeRepetitiousLocations(Choice):
-    """Whether to include 'repetitious' locations (IE 'Break 100 Tinted Rocks')."""
+    """
+    Whether to include 'repetitious' locations (e.g. 'Break 100 Tinted Rocks').
+    Include: Include these locations.
+    Exclude: Locations exist, but will be filler.
+    Remove: Locations will not be added.
+    """
     display_name = "Include Repetitious Locations"
     option_include = 0
     option_exclude = 1
     option_remove = 2
+    default = 1
 
 class LockAllItems(Toggle):
     """All items will be locked and placed into the multiworld, even if they are unlocked by default. This includes
@@ -74,15 +122,20 @@ class LockAllItems(Toggle):
     This means you may start with a 'default' selection of items different from Vanilla (Sad Onion may start locked, and
     Mom's Knife may start unlocked)!"""
     display_name = "Lock All Items"
+    default = 0
 
 class PoolRando(Choice):
-    """If set to shuffle, all items will be distributed into random pools,
-    but have the same number of pool entries as normal. If set to chaos, then items can be in any number of pools,
-    without rules."""
+    """
+    Randomize item pools.
+    Off: Vanilla item pool experience.
+    Shuffle: Items will be shuffled into random pools, but only equal to the number of pools the item was originally in.
+    Chaos: Unimplemented
+    """
     display_name = "Pool Rando"
     option_off = 0
     option_shuffle = 1
     option_chaos = 2
+    default = 0
 
 class StartingCharacter(Choice):
     """The character that you start with."""
@@ -120,7 +173,8 @@ class StartingCharacter(Choice):
     option_tainted_apollyon = 30
     option_tainted_forgotten = 31
     option_tainted_bethany = 32
-    option_tainted_jacob_and_esau = 33
+    option_tainted_jacob = 33
+    default = 0
 
 @dataclass
 class TBOIOptions(PerGameCommonOptions):
@@ -136,3 +190,5 @@ class TBOIOptions(PerGameCommonOptions):
     include_greed_mode: IncludeGreedMode
     include_challenges: IncludeChallenges
     include_repetitious: IncludeRepetitiousLocations
+    bossanity: Bossanity
+    chapter_completionsanity: ChapterCompletionsanity

@@ -108,25 +108,28 @@ class TBOIContext(CommonContext):
         await self.send_connect()
 
     def on_package(self, cmd: str, args: dict):
-        if cmd == "PrintJSON" and "type" in args and args["type"] == "ItemSend": # Log items that we've sent out
-            item: NetworkItem = args["item"]
-            receiving_slot = args["receiving"]
+        if cmd == "PrintJSON" and "type" in args:
+            if args["type"] == "ItemSend": # Log items that we've sent out
+                item: NetworkItem = args["item"]
+                receiving_slot = args["receiving"]
 
-            # We either sent or received the item, so we'll need to inform the game
-            if item.player == self.slot or receiving_slot == self.slot:
-                self.must_update_file = True
+                # We either sent or received the item, so we'll need to inform the game
+                if item.player == self.slot or receiving_slot == self.slot:
+                    self.must_update_file = True
 
-            # We didn't send this item, or this item is for us... we only care about things WE send OUT
-            if item.player != self.slot or receiving_slot == self.slot:
-                return
+                # We didn't send this item, or this item is for us... we only care about things WE send OUT
+                if item.player != self.slot or receiving_slot == self.slot:
+                    return
 
-            self.items_sent.append(SentNetworkItem(
-                item.item,
-                item.location,
-                item.player,
-                receiving_slot,
-                item.flags
-            ))
+                self.items_sent.append(SentNetworkItem(
+                    item.item,
+                    item.location,
+                    item.player,
+                    receiving_slot,
+                    item.flags
+                ))
+        elif cmd == "ReceivedItems":
+                self.must_update_file = True # Update the output file when an item is received
 
 async def handle_sending_locations(ctx: TBOIContext):
     if not os.path.isfile(ctx.game_output_file_path): # No output file, therefore, no locations to send

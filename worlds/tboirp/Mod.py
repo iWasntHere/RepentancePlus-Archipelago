@@ -8,6 +8,7 @@ import jinja2
 
 import Utils
 import worlds.Files
+from BaseClasses import ItemClassification
 
 template_load_lock = threading.Lock()
 
@@ -74,6 +75,101 @@ def make_pools_xml(pool_values: Dict[str, list[TBOIPoolEntry]]) -> str:
 
     return ET.tostring(root, encoding="utf-8")
 
+characters = [
+    "Isaac", "Magdalene", "Cain", "Judas", "???",
+    "Eve", "Samson",
+    "Azazel", "Lazarus", "Eden", "Lost",
+    "Lilith", "Keeper",
+    "Apollyon", "Forgotten",
+    "Bethany", "Jacob and Esau",
+
+    "Tainted Isaac", "Tainted Magdalene", "Tainted Cain", "Tainted Judas", "Tainted ???",
+    "Tainted Eve", "Tainted Samson",
+    "Tainted Azazel", "Tainted Lazarus", "Tainted Eden", "Tainted Lost",
+    "Tainted Lilith", "Tainted Keeper",
+    "Tainted Apollyon", "Tainted Forgotten",
+    "Tainted Bethany", "Tainted Jacob"
+]
+
+def item_classification_string(classification: ItemClassification):
+    """
+    Returns a string describing how useful the given classification of item is.
+    """
+
+    if classification == ItemClassification.useful:
+        return "useful thing"
+    elif classification == ItemClassification.progression:
+        return "important thing"
+    elif classification == ItemClassification.progression:
+        return "\"important\" thing"
+
+    return "thing"
+
+def make_fortune_hints(world: "TBOIWorld") -> dict:
+    """
+    Creates the dict that holds all the player's Fortune Teller hints.
+    """
+
+    hints = {}
+    specificity = world.options.hint_specificity
+
+    # Items
+    for hint_item in world.hint_items:
+        hints.setdefault("Global", [])
+
+        location = hint_item.location
+        player_name = world.multiworld.get_player_name(location.player)
+
+        text = "{item}|IS AT|{location}|FROM {finder}"
+
+        # If the item is in our world, omit the player it's from
+        if location.player == world.player:
+            text = "{item} IS AT|{location}"
+
+        item_name = hint_item.name
+
+        # If on vague specificity, replace with classification
+        if specificity.value == specificity.option_vague:
+            item_name = item_classification_string(hint_item.classification)
+
+        hints["Global"].append({
+            "text": text.format(item = item_name, location = location.name, finder = player_name).upper(),
+            "location": location.address
+        })
+
+    # Locations
+    for hint_location in world.hint_locations:
+        character = hint_location.data.character
+
+        if character is None: # Any character can get this fortune
+            character = "Global"
+
+        hints.setdefault(character, [])
+
+        item_name = hint_location.item.name if specificity.value != specificity.option_vague else item_classification_string(hint_location.item.classification)
+        player_name = world.multiworld.get_player_name(hint_location.item.player) + "'S"
+
+        # If the item is for this slot, then use "your" as the player's name
+        if world.player == hint_location.item.player:
+            player_name = "YOUR"
+
+        full_name = "{player} {item}".format(player=player_name, item=item_name)
+
+        if len(full_name) >= 24:  # Split the player and item name onto separate lines if together they're too long
+            full_name = "{player}|{item}".format(player=player_name, item=item_name)
+
+        if specificity.value == specificity.option_full: # Full hint
+            text = "{name}|is at {location}".format(name = full_name, location = hint_location.name)
+        else: # Immersive & Vague hint
+            text = hint_location.data.as_hint().format(item = full_name)
+
+        hints[character].append({
+            "text": text.upper(),
+            "location": hint_location.address
+        })
+
+    return hints
+
 def generate_mod(world: "TBOIWorld", output_directory: str):
     player = world.player
     mw = world.multiworld
@@ -92,6 +188,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
             metadata_template = template_env.get_template("metadata.xml")
             mainlua_template = template_env.get_template("main.lua")
             itemstateslua_template = template_env.get_template("item_states.lua")
+            fortune_hintslua_template = template_env.get_template("fortune_hints.lua")
 
     # Set template data
     mod_name = f"_Archipelago ({mw.get_file_safe_player_name(player)}) ({mw.seed_name})"
@@ -106,7 +203,8 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
         "shop_donation_location_count": world.options.shop_donations.value,
         "greed_donation_location_count": world.options.greed_donations.value,
         "consumable_location_count": world.options.consumable_locations.value,
-        "target_baby_codes": world.babies
+        "target_baby_codes": world.babies,
+        "fortune_hints":make_fortune_hints(world)
     }
 
     # Create the .zip
@@ -134,6 +232,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
     mod.writing_tasks.append(lambda: ("item_states.lua", itemstateslua_template.render(**template_data)))
     mod.writing_tasks.append(lambda: ("incoming_ap_data.lua", ""))
     mod.writing_tasks.append(lambda: ("metadata.xml", metadata_template.render(**template_data)))
+    mod.writing_tasks.append(lambda: ("fortune_hints.lua", fortune_hintslua_template.render(**template_data)))
 
     # If we're doing pool rando, generate an itempools.xml
     if world.options.pool_rando.value != world.options.pool_rando.option_off:

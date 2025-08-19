@@ -207,6 +207,40 @@ class LostDifficulty(Choice):
     option_impossible = 1
     default = 0
 
+class CharacterCompletionHints(Toggle):
+    """
+    Fortune Teller machines may give hints for locations relevant to the currently played character.
+    """
+    display_name = "Character Completion Hints"
+    default = 1
+
+class BabyHints(Toggle):
+    """
+    Fortune Teller machines may give hints for the location of co-op babies in Baby Hunt mode.
+    """
+    display_name = "Baby Location Hints"
+    default = 1
+
+class CharacterHints(Toggle):
+    """
+    Fortune Teller machines may give hints for the location of characters.
+    """
+    display_name = "Character Location Hints"
+    default = 1
+
+class HintSpecificity(Choice):
+    """
+    How much information a Fortune Teller hint will give.
+    Full: Hints will show the exact location and item name.
+    Immersive: Hints for character items will be slightly vague, but still show the item's name and recipient.
+    Vague: Same as Immersive, but all item names will be replaced with its progression classification.
+    """
+    display_name = "Hint Specificity"
+    option_full = 0
+    option_immersive = 1
+    option_vague = 2
+    default = 0
+
 @dataclass
 class TBOIOptions(PerGameCommonOptions):
     game_mode: GameMode
@@ -225,3 +259,7 @@ class TBOIOptions(PerGameCommonOptions):
     include_repetitious: IncludeRepetitiousLocations
     bossanity: Bossanity
     chapter_completionsanity: ChapterCompletionsanity
+    character_completion_hints: CharacterCompletionHints
+    baby_hints: BabyHints
+    character_hints: CharacterHints
+    hint_specificity: HintSpecificity

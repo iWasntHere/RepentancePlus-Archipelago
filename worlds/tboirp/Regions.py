@@ -15,6 +15,16 @@ class TBOIRegionData(NamedTuple):
     to_regions: Optional[List[str]] = None
     locations: Optional[List[LocationData]] = []
 
+def any_element_in_list(elements: list, against: list):
+    """
+    'True' when any item in the first array exists in the second array.
+    """
+    for item in elements:
+        if item in against:
+            return True
+
+    return False
+
 def make_regions(world: "TBOIWorld", location_data: list[LocationData]):
     player = world.player
     multiworld = world.multiworld
@@ -88,6 +98,9 @@ def make_regions(world: "TBOIWorld", location_data: list[LocationData]):
     for location_datum in location_data:
         all_regions[location_datum.region].locations.append(location_datum)
 
+    # Set the hint location list
+    world.hint_locations = []
+
     # Create regions and locations, add them to multiworld
     for region_name, region_data in all_regions.items():
         region = Region(region_name, player, multiworld)
@@ -97,7 +110,13 @@ def make_regions(world: "TBOIWorld", location_data: list[LocationData]):
                 location = TBOILocation(player, location_datum, region)
                 if location.progress_type == LocationProgressType.EXCLUDED:
                     pass
+
                 region.locations.append(location)
+
+                # Pick which locations will end up becoming hints for the Fortune Teller
+                if world.options.character_completion_hints.value == 1:
+                    if location_datum.character is not None and any_element_in_list(["Mark", "Tainted_Unlock", "Stage_Clear"], location_datum.categories):
+                        world.hint_locations.append(location)
 
         multiworld.regions.append(region)
 

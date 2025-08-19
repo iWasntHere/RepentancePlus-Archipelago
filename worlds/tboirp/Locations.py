@@ -10,11 +10,14 @@ if TYPE_CHECKING:
 
 class TBOILocation(Location):
     game = "The Binding of Isaac: Repentance+"
+    data: LocationData
 
     def __init__(self, player: int, data: LocationData, region: Region):
         super().__init__(player, data.full_name(), data.code, region)
         self.access_rule = data.access_rule
         self.progress_type = data.progress_type
+
+        self.data = data
 
 def make_locations(world: "TBOIWorld") -> list[LocationData]:
     ply = world.player

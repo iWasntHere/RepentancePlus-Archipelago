@@ -5,7 +5,7 @@ from worlds.AutoWorld import World, WebWorld
 from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool, \
     do_pool_rando_shuffle
 from .Items_Data import items_data, TBOIPoolEntry
-from .Locations import make_locations, LocationData
+from .Locations import make_locations, LocationData, TBOILocation
 from .Locations_Data import locations_data
 from .Mod import generate_mod
 from .Options import TBOIOptions
@@ -65,6 +65,9 @@ class TBOIWorld(World):
 
     babies: list[int] # Baby item codes that were chosen to be included in baby hunt
 
+    hint_locations: list[TBOILocation] # Locations that end up being hinted by the Fortune Teller
+    hint_items: list[TBOIItem] # Items that end up being hinted by the Fortune Teller
+
     item_name_groups = {
         "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
@@ -80,10 +83,27 @@ class TBOIWorld(World):
     def create_items(self):
         items_table: dict[str: ItemData] = {name: item for name, item in self.usable_items.items()}
 
+        # Create the hinted items list for the Fortune Teller
+        self.hint_items = []
+        hinted_types = [] # Types of items to generate hints for
+
+        # Baby item hints
+        if self.options.baby_hints.value == 1:
+            hinted_types.append("Co-Op_Baby")
+
+        # Character hints
+        if self.options.character_hints.value == 1:
+            hinted_types.extend(["Character", "Tainted_Character"])
+
         # Now we can actually add some stuff!
         for name, data in items_table.items():
             for i in range(data.amount): # In case we have multiple copies
-                self.multiworld.itempool.append(TBOIItem(self.player, name, data))
+                item = TBOIItem(self.player, name, data)
+                self.multiworld.itempool.append(item)
+
+                # Only characters and babies are hinted
+                if data.categories[0] in hinted_types:
+                    self.hint_items.append(item)
 
     def create_regions(self):
         make_regions(self, [data for data in make_locations(self) if data.progress_type is not None])

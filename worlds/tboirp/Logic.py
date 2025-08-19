@@ -9,7 +9,7 @@ class TBOILogic:
     easier_lost: bool # Whether the Lost needs its mantle to have its locations be in logic
 
     normal_character_items = [
-        "Magdalene", "Cain", "Judas", "???",
+        "Isaac", "Magdalene", "Cain", "Judas", "???",
         "Eve", "Samson",
         "Azazel", "Lazarus", "Eden", "Lost",
         "Lilith", "Keeper",

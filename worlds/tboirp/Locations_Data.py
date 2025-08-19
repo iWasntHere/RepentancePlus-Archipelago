@@ -1,9 +1,11 @@
+import re
 from math import floor
 from typing import NamedTuple, Optional, TYPE_CHECKING
 
 from BaseClasses import LocationProgressType
 from worlds.generic.Rules import CollectionRule
 from .Logic import TBOILogic
+from ..shapez import categories
 
 if TYPE_CHECKING:
     from . import TBOIWorld
@@ -21,6 +23,8 @@ ap_location_regions = [
     "The Void",
     "Ascent"
 ]
+
+location_regex = re.compile(r"\((.+)\)")
 
 class LocationData(NamedTuple):
     name: str
@@ -42,6 +46,76 @@ class LocationData(NamedTuple):
             return self.name
 
         return "{name} ({r}x)".format(name=self.name, r=self.repetitions)
+
+    def as_hint(self) -> str:
+        """
+        Returns this location as a hint that needs to be formatted.
+        """
+
+        if self.name == "All Completion Marks":
+            return "IT ALL CONVERGES ON|{item}"
+        elif self.name == "Mega Satan Defeated (All Non-Tainted Characters)":
+            return "MASS DEFIANCE RESULTS IN|{item}"
+        elif self.name == "All Non-Tainted Completion Marks":
+            return "YOUR SELVES WORK TOWARDS|{item}"
+
+        if "Tainted_Unlock" in self.categories:
+            return "THE CLOSET HOLDS|{item}"
+
+        if "Mark" in self.categories or "Stage_Clear" in self.categories:
+            boss_name = location_regex.search(self.name)
+
+            if boss_name is None:
+                return "???"
+
+            boss_name = boss_name.group(1)
+
+            if boss_name == "Boss Rush":
+                return "A BRUTAL ONSLAUGHT HOLDS|{item}"
+            elif boss_name == "Mom's Heart":
+                return "A MOTHER'S LOVE BEARS|{item}"
+            elif boss_name == "Satan":
+                return "HIS GIFT TO YOU IS|{item}"
+            elif boss_name == "Isaac":
+                return "{item}|IS IN YOUR REFLECTION"
+            elif boss_name == "???":
+                return "YOUR FUTURE HOLDS|{item}"
+            elif boss_name == "The Lamb":
+                return "YOUR SACRIFICIAL REWARD IS|{item}"
+            elif boss_name == "Mega Satan":
+                return "HE IS IMPRISONED WITH|{item}"
+            elif boss_name == "Hush":
+                return "THE BARREN PASTURE YIELDS|{item}"
+            elif boss_name == "Delirium":
+                return "HAUNTING DREAMS OF|{item}"
+            elif boss_name == "Mother":
+                return "THE WITNESS WILL HOLD|{item}"
+            elif boss_name == "The Beast":
+                return "{item}|IS IN A BETTER PLACE"
+            elif boss_name == "Ultra Greed":
+                return "THE HUSK HAS HOARDED|{item}"
+            elif boss_name == "Ultra Greedier":
+                return "GOLDEN STATUE, CORE OF|{item}"
+            elif boss_name == "All Marks":
+                return "YOUR EGO'S FINAL REWARD IS|{item}"
+            elif boss_name == "Isaac, ???, Satan, The Lamb":
+                return "THE QUARTET GUARD|{item}"
+            elif boss_name == "Hush & Boss Rush":
+                return "TIMED PASSAGES SEAL|{item}"
+            elif boss_name == "Chapter 1":
+                return "THE ENTRANCE ENDS IN|{item}"
+            elif boss_name == "Chapter 2":
+                return "SUBTERRAN NETWORKS HOUSE|{item}"
+            elif boss_name == "Chapter 3":
+                return "{item}|LIES DEEP IN THE EARTH"
+            elif boss_name == "Chapter 4":
+                return "YOUR BIRTHPLACE CONTAINS|{item}"
+            elif boss_name == "Chapter 5":
+                return "SIN AND REPENTANCE GAINS|{item}"
+            elif boss_name == "Chapter 6":
+                return "DARK SPACES HIDE|{item}"
+
+        return ""
 
 def locations_data(world: Optional["TBOIWorld"]):
     if world is not None:

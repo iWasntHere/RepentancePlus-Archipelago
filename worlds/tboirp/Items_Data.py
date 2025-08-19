@@ -1235,7 +1235,7 @@ items_data = {
     "Begotten Baby"                 :ItemData(1225, ItemClassification.filler, ['Co-Op_Baby'], 173, 21, 1, None, []),
     "Dead Baby"                     :ItemData(1226, ItemClassification.filler, ['Co-Op_Baby'], 174, 22, 1, None, []),
     "Fighting Baby"                 :ItemData(1227, ItemClassification.filler, ['Co-Op_Baby'], 177, 23, 1, None, []),
-    "-0-"                           :ItemData(1228, ItemClassification.filler, ['Co-Op_Baby'], 175, 24, 1, None, []),
+    "-0- Baby"                      :ItemData(1228, ItemClassification.filler, ['Co-Op_Baby'], 175, 24, 1, None, []),
     "Glitch Baby"                   :ItemData(1229, ItemClassification.filler, ['Co-Op_Baby'], 176, 25, 1, None, []),
     "Magnet Baby"                   :ItemData(1230, ItemClassification.filler, ['Co-Op_Baby'], None, 26, 1, None, []),
     "Black Baby"                    :ItemData(1231, ItemClassification.filler, ['Co-Op_Baby'], 212, 27, 1, None, []),

@@ -6,52 +6,6 @@ from ..generic.Rules import CollectionRule
 if TYPE_CHECKING:
     from . import TBOIWorld
 
-normal_character_items = [
-    "Magdalene", "Cain", "Judas", "???",
-    "Eve", "Samson",
-    "Azazel", "Lazarus", "Eden", "Lost",
-    "Lilith", "Keeper",
-    "Apollyon", "Forgotten",
-    "Bethany", "Jacob and Esau"
-]
-
-tainted_character_tems = [
-    "The Broken", "The Dauntless", "The Hoarder", "The Deceiver", "The Soiled",
-    "The Curdled", "The Savage",
-    "The Benighted", "The Enigma", "The Capricious", "The Baleful",
-    "The Harlot", "The Miser",
-    "The Empty", "The Fettered",
-    "The Zealot", "The Deserter"
-]
-
-def has_all_normal_characters(player: int, state: CollectionState):
-    return state.has_all(normal_character_items, player)
-
-def has_all_characters(player: int, state: CollectionState):
-    return state.has_all(normal_character_items + tainted_character_tems, player)
-
-def can_reach_all_regions(player: int, state: CollectionState, regions: list[str]):
-    for name in regions:
-        if not state.can_reach_region(name, player):
-            return False
-
-    return True
-
-def can_reach_big4(player: int, state: CollectionState):
-    return can_reach_all_regions(player, state, ["Cathedral", "The Chest", "Sheol", "Dark Room"])
-
-def can_reach_br_hush(player: int, state: CollectionState):
-    return can_reach_all_regions(player, state, ["Chapter 3", "Blue Womb"])
-
-def can_reach_all_marks(player: int, state: CollectionState):
-    return can_reach_all_regions(player, state, [
-        "Chapter 3", "Chapter 4",
-        "Dark Room", "The Chest", "Mega Satan",
-        "Blue Womb", "The Void",
-        "Corpse", "Ascent",
-        "Greed Mode", "Greedier Mode"
-    ])
-
 def set_region_access_rule(mw: MultiWorld, player: int, region: str, rule: CollectionRule):
     for entrance in mw.get_region(region, player).entrances:
         entrance.access_rule = rule

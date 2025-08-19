@@ -81,23 +81,23 @@ class LocationData(NamedTuple):
             elif boss_name == "???":
                 return "YOUR FUTURE HOLDS|{item}"
             elif boss_name == "The Lamb":
-                return "YOUR SACRIFICIAL REWARD IS|{item}"
+                return "YOUR DARK REWARD IS|{item}"
             elif boss_name == "Mega Satan":
                 return "HE IS IMPRISONED WITH|{item}"
             elif boss_name == "Hush":
-                return "THE BARREN PASTURE YIELDS|{item}"
+                return "A BARREN PASTURE YIELDS|{item}"
             elif boss_name == "Delirium":
                 return "HAUNTING DREAMS OF|{item}"
             elif boss_name == "Mother":
-                return "THE WITNESS WILL HOLD|{item}"
+                return "THE WITNESS CARRIES|{item}"
             elif boss_name == "The Beast":
                 return "{item}|IS IN A BETTER PLACE"
             elif boss_name == "Ultra Greed":
                 return "THE HUSK HAS HOARDED|{item}"
             elif boss_name == "Ultra Greedier":
-                return "GOLDEN STATUE, CORE OF|{item}"
+                return "ICON OF GREED HAS|{item}"
             elif boss_name == "All Marks":
-                return "YOUR EGO'S FINAL REWARD IS|{item}"
+                return "YOUR FINAL REWARD IS|{item}"
             elif boss_name == "Isaac, ???, Satan, The Lamb":
                 return "THE QUARTET GUARD|{item}"
             elif boss_name == "Hush & Boss Rush":
@@ -105,7 +105,7 @@ class LocationData(NamedTuple):
             elif boss_name == "Chapter 1":
                 return "THE ENTRANCE ENDS IN|{item}"
             elif boss_name == "Chapter 2":
-                return "SUBTERRAN NETWORKS HOUSE|{item}"
+                return "BURIED IN ROCK LIES|{item}"
             elif boss_name == "Chapter 3":
                 return "{item}|LIES DEEP IN THE EARTH"
             elif boss_name == "Chapter 4":

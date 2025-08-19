@@ -13,7 +13,7 @@ GREED_DONATION_LOCATION_COUNT = {{ greed_donation_location_count }}
 CONSUMABLE_LOCATION_COUNT = {{ consumable_location_count }}
 TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
 
-ARCHIPELAGO_HINTS = require("fortune_hints.lua")
+ARCHIPELAGO_HINTS = require("fortune_hints")
 
 local itemStates = require("item_states")
 

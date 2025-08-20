@@ -1,19 +1,20 @@
 {% from "macros.lua" import list_to_lua %}
 
 local json = require("json")
-local mod = RegisterMod("{{ mod_formal_name }}", 1)
+local Mod = RegisterMod("{{ mod_formal_name }}", 1)
 
-AP_SUPP_MOD = mod
+-- Global var
+ArchipelagoSlot = Mod
 
-ARCHIPELAGO_SEED = "{{ seed_name }}"
-ARCHIPELAGO_SLOT = "{{ slot_name }}"
+ArchipelagoSlot.SEED = "{{ seed_name }}"
+ArchipelagoSlot.SLOT_NAME = "{{ slot_name }}"
 
-SHOP_DONATION_LOCATION_COUNT = {{ shop_donation_location_count }}
-GREED_DONATION_LOCATION_COUNT = {{ greed_donation_location_count }}
-CONSUMABLE_LOCATION_COUNT = {{ consumable_location_count }}
-TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
+ArchipelagoSlot.SHOP_DONATION_COUNT = {{ shop_donation_location_count }}
+ArchipelagoSlot.GREED_DONATION_COUNT = {{ greed_donation_location_count }}
+ArchipelagoSlot.CONSUMABLE_DONATION_COUNT = {{ consumable_location_count }}
+ArchipelagoSlot.TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
 
-ARCHIPELAGO_HINTS = require("fortune_hints")
+ArchipelagoSlot.HINT_FORTUNES = require("fortune_hints")
 
 local itemStates = require("item_states")
 
@@ -26,10 +27,10 @@ local function ensureSaveIsLoaded()
 		return -- Save already loaded, do nothing
 	end
 
-	if not mod:HasData() then -- No save, so create an empty save
+	if not Mod:HasData() then -- No save, so create an empty save
 		saveState = {save = {}, processed_items = {}}
 	else -- Save exists, so load it
-		saveState = json.decode(mod:LoadData())
+		saveState = json.decode(Mod:LoadData())
 	end
 
 	-- Use items' state keys to mark them as unlocked
@@ -42,27 +43,27 @@ local function ensureSaveIsLoaded()
 end
 
 -- For checking if an item is unlocked
-function mod:IsItemUnlocked(itemCode)
+function Mod:IsItemUnlocked(itemCode)
 	ensureSaveIsLoaded()
 	local state = itemStates[itemCode]
 
 	if state == nil then
-		AP_MAIN_MOD:Error("No such item code " .. tostring(itemCode))
+		Archipelago:Error("No such item code " .. tostring(itemCode))
 	end
 
 	return state
 end
 
 -- For saving data persistently
-function mod:SaveKey(key, value)
+function Mod:SaveKey(key, value)
 	ensureSaveIsLoaded()
 
 	saveState.save[key] = value
-	mod:SaveData(json.encode(saveState))
+	Mod:SaveData(json.encode(saveState))
 end
 
 -- For loading data persistently!
-function mod:LoadKey(key, default)
+function Mod:LoadKey(key, default)
     ensureSaveIsLoaded()
 
 	local val = saveState.save[key]
@@ -78,7 +79,7 @@ end
 local lastReadLength = 0
 
 -- Load the input data file so we can get updated from the Archipelago server
-mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
+Mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 	if Isaac.GetFrameCount() % 60 ~= 0 then -- Only do this once every second
 		return
 	end
@@ -116,11 +117,11 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 				-- Set the item as unlocked (item codes are strings)
 				itemStates[tostring(receive_data.item_code)] = true
 
-				Isaac.RunCallback(ArchipelagoModCallbacks.MC_ARCHIPELAGO_ITEM_RECEIVED, receive_data.item_name, receive_data.player_name, receive_data.location_name, false)
+				Isaac.RunCallback(Archipelago.Callbacks.MC_ARCHIPELAGO_ITEM_RECEIVED, receive_data.item_name, receive_data.player_name, receive_data.location_name, false)
 			else
 				saveState.processed_items[key] = FOREIGN_ITEM -- Mark it as so (with the FOREIGN_ITEM value)
 
-				Isaac.RunCallback(ArchipelagoModCallbacks.MC_ARCHIPELAGO_ITEM_SENT, receive_data.item_name, receive_data.player_name, receive_data.location_name, false)
+				Isaac.RunCallback(Archipelago.Callbacks.MC_ARCHIPELAGO_ITEM_SENT, receive_data.item_name, receive_data.player_name, receive_data.location_name, false)
 			end
 
 			-- Update the state table
@@ -130,9 +131,7 @@ mod:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
 
 	-- Update the save
 	if needsToSave then
-		mod:SaveData(json.encode(saveState))
+		Mod:SaveData(json.encode(saveState))
 	end
 
 end)
-
-AP_SUPP_MOD = mod

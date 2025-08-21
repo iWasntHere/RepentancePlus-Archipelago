@@ -170,6 +170,14 @@ def make_fortune_hints(world: "TBOIWorld") -> dict:
 
     return hints
 
+def make_location_info(world: "TBOIWorld") -> dict:
+    locations = world.get_locations()
+
+    return {location.address: {
+        "player_name": world.multiworld.get_player_name(location.item.player),
+        "item_name": world.multiworld.worlds[location.item.player].item_id_to_name[location.item.code]
+    } for location in locations}
+
 def generate_mod(world: "TBOIWorld", output_directory: str):
     player = world.player
     mw = world.multiworld
@@ -189,6 +197,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
             mainlua_template = template_env.get_template("main.lua")
             itemstateslua_template = template_env.get_template("item_states.lua")
             fortune_hintslua_template = template_env.get_template("fortune_hints.lua")
+            location_info_lua_template = template_env.get_template("location_info.lua")
 
     # Set template data
     mod_name = f"_Archipelago ({mw.get_file_safe_player_name(player)}) ({mw.seed_name})"
@@ -204,7 +213,8 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
         "greed_donation_location_count": world.options.greed_donations.value,
         "consumable_location_count": world.options.consumable_locations.value,
         "target_baby_codes": world.babies,
-        "fortune_hints":make_fortune_hints(world)
+        "fortune_hints": make_fortune_hints(world),
+        "location_information": make_location_info(world)
     }
 
     # Create the .zip
@@ -233,6 +243,7 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
     mod.writing_tasks.append(lambda: ("incoming_ap_data.lua", ""))
     mod.writing_tasks.append(lambda: ("metadata.xml", metadata_template.render(**template_data)))
     mod.writing_tasks.append(lambda: ("fortune_hints.lua", fortune_hintslua_template.render(**template_data)))
+    mod.writing_tasks.append(lambda: ("location_info.lua", location_info_lua_template.render(**template_data)))
 
     # If we're doing pool rando, generate an itempools.xml
     if world.options.pool_rando.value != world.options.pool_rando.option_off:

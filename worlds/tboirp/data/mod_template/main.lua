@@ -11,12 +11,13 @@ ArchipelagoSlot.SLOT_NAME = "{{ slot_name }}"
 
 ArchipelagoSlot.SHOP_DONATION_COUNT = {{ shop_donation_location_count }}
 ArchipelagoSlot.GREED_DONATION_COUNT = {{ greed_donation_location_count }}
-ArchipelagoSlot.CONSUMABLE_DONATION_COUNT = {{ consumable_location_count }}
+ArchipelagoSlot.CONSUMABLE_COUNT = {{ consumable_location_count }}
 ArchipelagoSlot.TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
 
 ArchipelagoSlot.HINT_FORTUNES = require("fortune_hints")
 
 local itemStates = require("item_states")
+local locationInfo = require("location_info")
 
 local saveState = nil
 local FOREIGN_ITEM = -100
@@ -48,10 +49,21 @@ function Mod:IsItemUnlocked(itemCode)
 	local state = itemStates[itemCode]
 
 	if state == nil then
-		Archipelago:Error("No such item code " .. tostring(itemCode))
+		Archipelago.util.Error("No such item code " .. tostring(itemCode))
 	end
 
 	return state
+end
+
+-- For checking what items exist at what location
+function Mod:GetLocationInfo(locationCode)
+    local info = locationInfo[locationCode]
+
+    if info == nil then
+         Archipelago.util.Error("No such location code " .. tostring(locationCode))
+    end
+
+    return info
 end
 
 -- For saving data persistently

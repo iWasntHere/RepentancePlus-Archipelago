@@ -946,7 +946,7 @@ def locations_data(world: Optional["TBOIWorld"]):
                      False, "Isaac", lambda s: s.has_all(["Challenge #36 (Scat Man)", "Isaac"], p)),
         LocationData("Challenge #37 (Bloody Mary)", 410, "Sheol", ['Challenge'], 1, LocationProgressType.DEFAULT, False,
                      "Bethany", lambda s: s.has_all(["Challenge #37 (Bloody Mary)", "Bethany"], p)),
-        LocationData("Challenge #38 (Baptism by Fire)", 411, "Cathdral", ['Challenge'], 1, LocationProgressType.DEFAULT,
+        LocationData("Challenge #38 (Baptism by Fire)", 411, "Cathedral", ['Challenge'], 1, LocationProgressType.DEFAULT,
                      False, "Bethany", lambda s: s.has_all(["Challenge #38 (Baptism by Fire)", "Bethany"], p)),
         LocationData("Challenge #39 (Isaac's Awakening)", 412, "Corpse", ['Challenge'], 1, LocationProgressType.DEFAULT,
                      False, "Isaac", lambda s: s.has_all(["Challenge #39 (Isaac's Awakening)", "Isaac"], p)),

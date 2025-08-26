@@ -41,6 +41,7 @@ class TBOIContext(CommonContext):
     game_input_file_path: Optional[str] # The file that will be written to pass data to the game (the supplemental mod)
 
     must_update_file: bool # 'True' when the incoming_ap_data.lua file must be written
+    local_seed_name: str # The seed name as reported by the mod
 
     def __init__(self, server_address, password, game_directory: str, save_slot: int):
         super().__init__(server_address, password)
@@ -96,9 +97,8 @@ class TBOIContext(CommonContext):
                 continue
 
             # All good!
-            self.auth = data["slot_name"]
-            self.seed_name = data["seed_name"] # Will automatically get disconnect if there is a mismatch
-
+            self.auth = data["slot_name"] # Will automatically get disconnect if there is a mismatch
+            self.local_seed_name = data["seed_name"]
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -106,6 +106,10 @@ class TBOIContext(CommonContext):
 
         await self.get_username() # This comes from the connection to the game
         await self.send_connect()
+
+        # Start the progression watcher
+        asyncio.create_task(
+            progression_watcher(self), name="TBOIProgressionWatcher")
 
     def on_package(self, cmd: str, args: dict):
         if cmd == "PrintJSON" and "type" in args:
@@ -129,7 +133,9 @@ class TBOIContext(CommonContext):
                     item.flags
                 ))
         elif cmd == "ReceivedItems":
-                self.must_update_file = True # Update the output file when an item is received
+            self.must_update_file = True # Update the output file when an item is received
+        elif cmd == "RoomInfo":
+            self.seed_name = args["seed_name"]
 
 async def handle_sending_locations(ctx: TBOIContext):
     if not os.path.isfile(ctx.game_output_file_path): # No output file, therefore, no locations to send
@@ -213,9 +219,17 @@ async def handle_receiving_items(ctx: TBOIContext):
 
 async def progression_watcher(ctx: TBOIContext):
     while not ctx.exit_event.is_set():
-        if not ctx.username: # Game isn't connected yet
+        if not ctx.seed_name: # Game isn't connected yet
             await asyncio.sleep(5)
             continue
+
+        # Seed name doesn't match, so disconnect
+        if ctx.local_seed_name != ctx.seed_name:
+            msg = "The server is running a different multiworld than your client is. (invalid seed_name)"
+            logger.info(msg, extra={'compact_gui': True})
+            ctx.gui_error('Error', msg)
+            await ctx.disconnect(False)
+            return
 
         # Set the input file path
         if ctx.game_input_file_path is None:
@@ -238,9 +252,6 @@ def launch():
 
         ctx.server_task = asyncio.create_task(
             server_loop(ctx), name="server loop")
-
-        asyncio.create_task(
-            progression_watcher(ctx), name="TBOIProgressionWatcher")
 
         if gui_enabled:
             ctx.run_gui()

@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 class TBOILogic:
     player: int
     easier_lost: bool # Whether the Lost needs its mantle to have its locations be in logic
+    items_in_pool: list[str] # Items that exist in the pool
 
     normal_character_items = [
         "Isaac", "Magdalene", "Cain", "Judas", "???",
@@ -28,8 +29,8 @@ class TBOILogic:
 
     def __init__(self, world: "TBOIWorld"):
         self.player = world.player
-
         self.easier_lost = world.options.lost_difficulty.value == world.options.lost_difficulty.option_hard
+        self.items_in_pool = []
 
     def has_the_lost(self, state: CollectionState) -> bool:
         """
@@ -91,3 +92,12 @@ class TBOILogic:
         'True' when the player has the given character, and Cracked Key.
         """
         return state.has_all([as_character, "Cracked Key"], self.player)
+
+    def has_quantum(self, name: str, state: CollectionState) -> bool:
+        """
+        'True' if the item is not in the pool (not randomized), or the player has collected it.
+        """
+        if name not in self.items_in_pool: # Item is not randomized
+            return True
+
+        return state.has(name, self.player)

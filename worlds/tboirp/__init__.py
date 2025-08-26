@@ -7,6 +7,7 @@ from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items
 from .Items_Data import items_data, TBOIPoolEntry
 from .Locations import make_locations, LocationData, TBOILocation
 from .Locations_Data import locations_data
+from .Logic import TBOILogic
 from .Mod import generate_mod
 from .Options import TBOIOptions
 from .Regions import make_regions
@@ -68,6 +69,8 @@ class TBOIWorld(World):
     hint_locations: list[TBOILocation] # Locations that end up being hinted by the Fortune Teller
     hint_items: list[TBOIItem] # Items that end up being hinted by the Fortune Teller
 
+    logic: TBOILogic
+
     item_name_groups = {
         "Co-Op Baby": [name for name, data in items_data.items() if "Co-Op_Baby" in data.categories]
     }
@@ -115,6 +118,8 @@ class TBOIWorld(World):
         return self.multiworld.random.choice(filler_items)
 
     def generate_early(self) -> None:
+        self.logic = TBOILogic(self)
+
         self.starting_character_item = character_items[self.options.starting_character.value]
         self.multiworld.push_precollected(self.create_item(self.starting_character_item))
 
@@ -138,4 +143,6 @@ class TBOIWorld(World):
         if pool_rando_value:
             if pool_rando_value == self.options.pool_rando.option_shuffle:
                 self.pool_rando = do_pool_rando_shuffle(self)
+
+        self.logic.items_in_pool = [name for name, data in self.usable_items.items()]
 

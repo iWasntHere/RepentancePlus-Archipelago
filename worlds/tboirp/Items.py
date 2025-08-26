@@ -176,8 +176,7 @@ trap_items = (
     "TM Trainer Trap",
     "Clicker Trap",
     "Run",
-    "Wheel of Fortune? Trap",
-    "Cursed! Trap"
+    "Wheel of Fortune? Trap"
 )
 
 filler_items = (

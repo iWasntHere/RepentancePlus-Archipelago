@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from BaseClasses import MultiWorld, CollectionState
+from BaseClasses import MultiWorld
+from .Logic import TBOILogic
 from ..generic.Rules import CollectionRule
 
 if TYPE_CHECKING:
@@ -13,6 +14,7 @@ def set_region_access_rule(mw: MultiWorld, player: int, region: str, rule: Colle
 def make_rules(world: "TBOIWorld"):
     ply = world.player
     mw = world.multiworld
+    logic = TBOILogic(world)
 
     mw.completion_condition[ply] = lambda state: state.has("Victory", ply)
     mw.get_location("Victory (Baby Hunt)", ply).place_locked_item(world.create_item("Victory"))
@@ -52,7 +54,12 @@ def make_rules(world: "TBOIWorld"):
     set_region_access_rule(mw, ply, "Mega Satan", lambda state: state.has("Angels", ply))
     set_region_access_rule(mw, ply, "The Void", lambda state: state.has("New Area", ply))
 
-    # Womb is required here because neither polaroid nor negative will properly drop without it
-    set_region_access_rule(mw, ply, "Ascent", lambda state: state.has("A Strange Door", ply) and state.has_any(["The Polaroid", "The Negative"], ply) and state.has("The Womb", ply))
+    # Womb is required here because neither polaroid nor negative will properly drop without it,
+    # The Fool is required to make leaving the Mom boss room easier
+    set_region_access_rule(mw, ply, "Ascent",
+                           lambda state: state.has_all(["A Strange Door", "The Womb"], ply) and
+                                         state.has_any(["The Polaroid", "The Negative"], ply) and
+                                         logic.has_quantum("The Fool", state)
+                           )
 
     set_region_access_rule(mw, ply, "Greedier Mode", lambda state: state.has("Greedier!", ply))

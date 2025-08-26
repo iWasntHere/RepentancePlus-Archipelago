@@ -5,7 +5,6 @@ from typing import NamedTuple, Optional, TYPE_CHECKING
 from BaseClasses import LocationProgressType
 from worlds.generic.Rules import CollectionRule
 from .Logic import TBOILogic
-from ..shapez import categories
 
 if TYPE_CHECKING:
     from . import TBOIWorld

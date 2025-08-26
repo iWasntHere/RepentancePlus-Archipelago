@@ -1903,10 +1903,10 @@ def locations_data(world: Optional["TBOIWorld"]):
     for i in range(50):
         region = ap_location_regions[floor((i/50) * len(ap_location_regions))]
 
-        locs.append(LocationData("Shop Donation ({i}x)".format(i=i+1), 1087 + i, "Chapter 1", ['AP', 'Shop_Donation'], 1, LocationProgressType.DEFAULT, True, None,
+        locs.append(LocationData("Shop Donation ({i}x)".format(i=i+1), 1070 + i, "Chapter 1", ['AP', 'Shop_Donation'], 1, LocationProgressType.DEFAULT, True, None,
                      lambda s: s.can_reach_region(region, p)))
-        locs.append(LocationData("Greed Donation ({i}x)".format(i=i+1), 1288 + i, "Greed Mode", ['AP', 'Greed_Donation'], 1, LocationProgressType.DEFAULT,
+        locs.append(LocationData("Greed Donation ({i}x)".format(i=i+1), 1271 + i, "Greed Mode", ['AP', 'Greed_Donation'], 1, LocationProgressType.DEFAULT,
                      True, None, lambda s: s.can_reach_region(region, p)))
-        locs.append(LocationData("AP Consumable ({i}x)".format(i=i+1), 1489 + i, "Chapter 1", ['AP'], 1, LocationProgressType.DEFAULT, True, None, lambda s: s.can_reach_region(region, p)))
+        locs.append(LocationData("AP Consumable ({i}x)".format(i=i+1), 1472 + i, "Chapter 1", ['AP'], 1, LocationProgressType.DEFAULT, True, None, lambda s: s.can_reach_region(region, p)))
 
     return locs

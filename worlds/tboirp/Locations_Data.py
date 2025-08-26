@@ -1895,12 +1895,6 @@ def locations_data(world: Optional["TBOIWorld"]):
         LocationData("All Non-Tainted Completion Marks", 868, "Mega Satan", ['Mark', 'All_Non_Tainted_Chars'], 1,
                      LocationProgressType.DEFAULT, False, None,
                      lambda s: logic.can_reach_all_marks(s) and logic.has_all_normal_characters(s)),
-        LocationData("Shop Donation", 1070, "Chapter 1", ['AP', 'Shop_Donation'], 1, LocationProgressType.DEFAULT, True,
-                     None, lambda s: True),
-        LocationData("Greed Donation", 1271, "Greed Mode", ['AP', 'Greed_Donation'], 1, LocationProgressType.DEFAULT,
-                     True, None, lambda s: True),
-        LocationData("AP Consumable", 1472, "Chapter 1", ['AP'], 1, LocationProgressType.DEFAULT, True, None,
-                     lambda s: True),
         LocationData("Victory (Baby Hunt)", 1673, "Menu", ['Victory'], 1, LocationProgressType.DEFAULT, True, None,
                      lambda s: True)
     ]

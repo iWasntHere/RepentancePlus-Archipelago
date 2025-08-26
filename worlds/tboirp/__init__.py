@@ -2,8 +2,8 @@ from typing import Dict, ClassVar
 
 from BaseClasses import Item, Tutorial, LocationProgressType
 from worlds.AutoWorld import World, WebWorld
-from .Items import filler_items, trap_items, TBOIItem, ItemData, character_items, generate_items_for_pool, \
-    do_pool_rando_shuffle
+from .Items import TBOIItem, ItemData, character_items, generate_items_for_pool, \
+    do_pool_rando_shuffle, filler_item_defs
 from .Items_Data import items_data, TBOIPoolEntry
 from .Locations import make_locations, LocationData, TBOILocation
 from .Locations_Data import locations_data
@@ -112,10 +112,8 @@ class TBOIWorld(World):
         make_regions(self, [data for data in make_locations(self) if data.progress_type is not None])
 
     def get_filler_item_name(self) -> str:
-        if self.random.random() < 0.25:
-            return self.multiworld.random.choice(trap_items)
-
-        return self.multiworld.random.choice(filler_items)
+        fillers = filler_item_defs(self.options)
+        return self.multiworld.random.choices([pair[0] for pair in fillers], weights=[pair[1] for pair in fillers])[0]
 
     def generate_early(self) -> None:
         self.logic = TBOILogic(self)

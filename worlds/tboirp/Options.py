@@ -241,6 +241,119 @@ class HintSpecificity(Choice):
     option_vague = 2
     default = 0
 
+class FillerWeight(Range):
+    """
+    Base class for weighted filler.
+    """
+    range_start = 0
+    range_end = 100
+    default = 50
+
+class ActiveRechargeWeight(FillerWeight):
+    """How often filler items will be an active item recharge."""
+    display_name = "Active Recharge Weight"
+    default = 20
+
+class TemporaryShieldWeight(FillerWeight):
+    """How often filler items will be a temporary shield."""
+    display_name = "Temporary Shield Weight"
+    default = 30
+
+class ThreeCoinsWeight(FillerWeight):
+    """How often filler items will be three random coins."""
+    display_name = "Three Coins Weight"
+    default = 15
+
+class ThreeCardsWeight(FillerWeight):
+    """How often filler items will be three random cards."""
+    display_name = "Three Cards Weight"
+    default = 30
+
+class ThreeRunesWeight(FillerWeight):
+    """How often filler items will be three random runes."""
+    display_name = "Three Runes Weight"
+    default = 30
+
+class ThreePillsWeight(FillerWeight):
+    """How often filler items will be three random pills."""
+    display_name = "Three Pills Weight"
+    default = 15
+
+class ThreeHeartsWeight(FillerWeight):
+    """How often filler items will be three random hearts."""
+    display_name = "Three Hearts Weight"
+    default = 30
+
+class ThreeBombsWeight(FillerWeight):
+    """How often filler items will be three random bombs."""
+    display_name = "Three Bombs Weight"
+    default = 30
+
+class ThreeKeysWeight(FillerWeight):
+    """How often filler items will be three random keys."""
+    display_name = "Three Keys Weight"
+    default = 30
+
+class FoolTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Fool."""
+    display_name = "Fool Trap Weight"
+    default = 5
+
+class HighPriestessTrapWeight(FillerWeight):
+    """How often filler items will force you to use The High Priestess."""
+    display_name = "High Priestess Trap Weight"
+    default = 3
+
+class TowerTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Tower."""
+    display_name = "Tower Trap Weight"
+    default = 5
+
+class EmperorTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Emperor."""
+    display_name = "Emperor Trap Weight"
+    default = 3
+
+class DamoclesTrapWeight(FillerWeight):
+    """How often filler items will force you to use Damocles."""
+    display_name = "Damocles Trap Weight"
+    default = 1
+
+class ReverseChariotTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Chariot?."""
+    display_name = "Chariot? Trap Weight"
+    default = 5
+
+class ReverseStarsTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Stars?."""
+    display_name = "Stars? Trap Weight"
+    default = 3
+
+class ForgetMeNowTrapWeight(FillerWeight):
+    """How often filler items will regenerate the current floor."""
+    display_name = "Forget Me Now Trap Weight"
+    default = 3
+
+class TMTrainerTrapWeight(FillerWeight):
+    """How often filler items will force TMTrainer into your inventory."""
+    display_name = "TMTrainer Trap Weight"
+    default = 1
+
+class ClickerTrapWeight(FillerWeight):
+    """How often filler items will randomly swap your character."""
+    display_name = "Clicker Trap Weight"
+    default = 1
+
+class RunTrapWeight(FillerWeight):
+    """How often filler items will force you to use The High Priestess?."""
+    display_name = "Run Trap Weight"
+    default = 3
+
+class ReverseWheelOfFortuneTrapWeight(FillerWeight):
+    """How often filler items will force you to use The Wheel of Fortune?."""
+    display_name = "Wheel of Fortune? Trap Weight"
+    default = 3
+
 @dataclass
 class TBOIOptions(PerGameCommonOptions):
     game_mode: GameMode
@@ -263,3 +376,26 @@ class TBOIOptions(PerGameCommonOptions):
     baby_hints: BabyHints
     character_hints: CharacterHints
     hint_specificity: HintSpecificity
+
+    active_recharge_weight: ActiveRechargeWeight
+    temporary_shield_weight: TemporaryShieldWeight
+    three_coins_weight: ThreeCoinsWeight
+    three_cards_weight: ThreeCardsWeight
+    three_runes_weight: ThreeRunesWeight
+    three_pills_weight: ThreePillsWeight
+    three_hearts_weight: ThreeHeartsWeight
+    three_bombs_weight: ThreeBombsWeight
+    three_keys_weight: ThreeKeysWeight
+
+    fool_trap_weight: FoolTrapWeight
+    high_priestess_trap_weight: HighPriestessTrapWeight
+    tower_trap_weight: TowerTrapWeight
+    emperor_trap_weight: EmperorTrapWeight
+    damocles_trap_weight: DamoclesTrapWeight
+    reverse_chariot_trap_weight: ReverseChariotTrapWeight
+    reverse_stars_trap_weight: ReverseStarsTrapWeight
+    forget_me_now_trap_weight: ForgetMeNowTrapWeight
+    tmtrainer_trap_weight: TMTrainerTrapWeight
+    clicker_trap_weight: ClickerTrapWeight
+    run_trap_weight: RunTrapWeight
+    reverse_wheel_of_fortune_trap_weight: ReverseWheelOfFortuneTrapWeight

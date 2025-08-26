@@ -7,7 +7,7 @@ from .Items_Data import ItemData, items_data, Pool
 from .Items_Data import TBOIPoolEntry
 
 if TYPE_CHECKING:
-    from . import TBOIWorld
+    from . import TBOIWorld, TBOIOptions
 
 
 class TBOIItem(Item):
@@ -161,32 +161,28 @@ def do_pool_rando_shuffle(world: "TBOIWorld"):
 
     return returned_pools
 
+def filler_item_defs(options: "TBOIOptions"):
+    return [
+        ("Fool Trap", options.fool_trap_weight.value),
+        ("High Priestess Trap", options.high_priestess_trap_weight.value),
+        ("Tower Trap", options.tower_trap_weight.value),
+        ("Emperor Trap", options.emperor_trap_weight.value),
+        ("Damocles Trap", options.damocles_trap_weight.value),
+        ("Chariot? Trap", options.reverse_chariot_trap_weight.value),
+        ("Stars? Trap", options.reverse_stars_trap_weight.value),
+        ("Forget Me Now Trap", options.forget_me_now_trap_weight.value),
+        ("TM Trainer Trap", options.tmtrainer_trap_weight.value),
+        ("Clicker Trap", options.clicker_trap_weight.value),
+        ("Run", options.run_trap_weight.value),
+        ("Wheel of Fortune? Trap", options.reverse_wheel_of_fortune_trap_weight.value),
 
-
-
-trap_items = (
-    "Fool Trap",
-    "High Priestess Trap",
-    "Tower Trap",
-    "Emperor Trap",
-    "Damocles Trap",
-    "Chariot? Trap",
-    "Stars? Trap",
-    "Forget Me Now Trap",
-    "TM Trainer Trap",
-    "Clicker Trap",
-    "Run",
-    "Wheel of Fortune? Trap"
-)
-
-filler_items = (
-    "Active Recharge",
-    "Temporary Shield",
-    "Three Coins",
-    "Three Cards",
-    "Three Runes",
-    "Three Pills",
-    "Three Hearts",
-    "Three Bombs",
-    "Three Keys"
-)
+        ("Active Recharge", options.active_recharge_weight.value),
+        ("Temporary Shield", options.temporary_shield_weight.value),
+        ("Three Coins", options.three_coins_weight.value),
+        ("Three Cards", options.three_cards_weight.value),
+        ("Three Runes", options.three_runes_weight.value),
+        ("Three Pills", options.three_pills_weight.value),
+        ("Three Hearts", options.three_hearts_weight.value),
+        ("Three Bombs", options.three_bombs_weight.value),
+        ("Three Keys", options.three_keys_weight.value)
+    ]

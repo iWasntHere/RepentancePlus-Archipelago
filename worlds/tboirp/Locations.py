@@ -68,14 +68,14 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
         if bossanity_value != options.bossanity.option_on and location.categories[0] == "Boss_Clear" and location.custom:
             if bossanity_value == options.bossanity.option_on_filler: # Exclude
                 exclude_location(locations, location)
-            elif bossanity_value == options.bossanity.option_on_filler: # Remove
+            elif bossanity_value == options.bossanity.option_off: # Remove
                 remove_location(locations, location)
 
         # Chapter Completionsanity!
         if chapter_completionsanity_value != options.chapter_completionsanity.option_on and location.categories[0] == "Stage_Clear" and location.custom:
-            if chapter_completionsanity_value == options.chapter_completionsanity.option_on: # Exclude
+            if chapter_completionsanity_value == options.chapter_completionsanity.option_on_filler: # Exclude
                 exclude_location(locations, location)
-            elif chapter_completionsanity_value == options.chapter_completionsanity.option_on_filler: # Remove
+            elif chapter_completionsanity_value == options.chapter_completionsanity.option_off: # Remove
                 remove_location(locations, location)
 
         # Character exclusions
@@ -117,9 +117,12 @@ def exclude_location(locations: list[LocationData], data: LocationData):
 Entirely removes a location
 """
 def remove_location(locations: list[LocationData], data: LocationData):
-    index = locations.index(data)
+    try:
+        index = locations.index(data)
 
-    locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, None, data.custom, data.character, data.access_rule)
+        locations[index] = LocationData(data.name, data.code, data.region, data.categories, data.repetitions, None, data.custom, data.character, data.access_rule)
+    except ValueError:
+        pass # This is fine, just means the location was removed
 
 """
 Sets a location's access rule

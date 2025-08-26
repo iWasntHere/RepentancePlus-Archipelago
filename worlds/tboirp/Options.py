@@ -25,7 +25,7 @@ class BabyRatioRequired(Range):
     display_name = "Baby Ratio Required"
     range_start = 1
     range_end = 100
-    default = 80
+    default = 60
 
 class ShopDonations(Range):
     """Number of shop donation locations to add. Each location costs 15 cents per check at a shop."""
@@ -91,11 +91,12 @@ class IncludeChallenges(Choice):
 
 class IncludeGreedMode(Choice):
     """
-    Whether to include greed/greedier mode.
-    None: Don't include Greed Mode whatsoever.
-    Greed Mode Only: Locations for Greed Mode completions as characters will be added.
-    Greedier Mode Only: Locations for Greedier Mode completions as characters will be added.
-    Greed and Greedier: Locations for both Greed and Greedier Mode completions as characters will be added.
+    Whether to include greed/greedier mode. This will extend to any locations that require the Greed Mode marks, such
+    as "all marks" locations.
+    None: Both Greed and Greedier modes will not be required to reach the goal.
+    Greed Mode Only: Locations for Greed Mode might be required.
+    Greedier Mode Only: Locations for Greedier Mode might be required.
+    Greed and Greedier: Locations for both Greed and Greedier Mode might be required.
     """
     display_name = "Include Greed(ier) Mode"
     option_none = 0

@@ -219,7 +219,7 @@ async def handle_receiving_items(ctx: TBOIContext):
 
 async def progression_watcher(ctx: TBOIContext):
     while not ctx.exit_event.is_set():
-        if not ctx.seed_name: # Game isn't connected yet
+        if not ctx.seed_name or not ctx.slot_info: # Game isn't connected yet
             await asyncio.sleep(5)
             continue
 

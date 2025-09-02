@@ -45,11 +45,6 @@ def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_lo
         for name in world.random.choices([name for name in items_data if "Co-Op_Baby" in items_data[name].categories]):
             set_item_classification(name, ItemClassification.progression_skip_balancing)
 
-    # Set challenges to filler if they don't contribute anything
-    if world.options.include_challenges == world.options.include_challenges.option_remove:
-        for name in world.random.choices([name for name in items_data if "Challenge" in items_data[name].categories]):
-            set_item_classification(name, ItemClassification.filler)
-
     # Filter out any of the 'excluded' items (as well as victory, and traps/fillers)
     filtered_items = {name: data for name, data in items_data.items() if name not in exclude_items and data.categories[0] not in ["Victory", "Trap", "Filler"]}
 

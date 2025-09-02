@@ -76,23 +76,17 @@ class Bossanity(Choice):
     option_on = 2
     default = 0
 
-class IncludeChallenges(Choice):
+class ExcludeChallenges(Toggle):
     """
-    Include challenges.
-    Include: Challenges will reward a check.
-    Exclude: Challenges will only reward filler.
-    Remove: Challenges will not be added as locations.
+    Exclude challenges from possibly having a required item. This makes them entirely optional.
     """
-    display_name = "Include Challenges"
-    option_include = 0
-    option_exclude = 1
-    option_remove = 2
-    default = 2
+    display_name = "Exclude Challenges"
+    default = 1
 
 class IncludeGreedMode(Choice):
     """
-    Whether to include greed/greedier mode. This will extend to any locations that require the Greed Mode marks, such
-    as "all marks" locations.
+    Whether greed/greedier mode locations can have required items.
+    This will extend to any locations that require the Greed Mode marks, such as "all marks" locations.
     None: Both Greed and Greedier modes will not be required to reach the goal.
     Greed Mode Only: Locations for Greed Mode might be required.
     Greedier Mode Only: Locations for Greedier Mode might be required.
@@ -105,17 +99,12 @@ class IncludeGreedMode(Choice):
     option_greed_and_greedier = 3
     default = 1
 
-class IncludeRepetitiousLocations(Choice):
+class ExcludeRepetitiousLocations(Choice):
     """
-    Whether to include 'repetitious' locations (e.g. 'Break 100 Tinted Rocks').
-    Include: Include these locations.
-    Exclude: Locations exist, but will be filler.
-    Remove: Locations will not be added.
+    Exclude 'repetitious' locations (e.g. 'Break 100 Tinted Rocks') from possible having a required item.
+    This makes them entirely optional.
     """
-    display_name = "Include Repetitious Locations"
-    option_include = 0
-    option_exclude = 1
-    option_remove = 2
+    display_name = "Exclude Repetitious Locations"
     default = 1
 
 class LockAllItems(Toggle):
@@ -369,8 +358,8 @@ class TBOIOptions(PerGameCommonOptions):
     greed_donations: GreedDonations
     consumable_locations: ConsumableLocations
     include_greed_mode: IncludeGreedMode
-    include_challenges: IncludeChallenges
-    include_repetitious: IncludeRepetitiousLocations
+    exclude_challenges: ExcludeChallenges
+    exclude_repeition: ExcludeRepetitiousLocations
     bossanity: Bossanity
     chapter_completionsanity: ChapterCompletionsanity
     character_completion_hints: CharacterCompletionHints

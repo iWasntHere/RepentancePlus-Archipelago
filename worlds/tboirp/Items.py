@@ -34,7 +34,7 @@ character_items = [
 ]
 
 """
-The way this works, is that we'll modify the existing items table(IDs are not changed), and then use that modified items table to specify
+The way this works, is that we'll modify the existing items table (IDs are not changed), and then use that modified items table to specify
 items. *These* items will actually be used in the Archipelago world (not unlocked by default).
 """
 def generate_items_for_pool(world: "TBOIWorld", location_count: int, included_locations_count: int, exclude_items: list[str]) -> Dict[str, ItemData]:

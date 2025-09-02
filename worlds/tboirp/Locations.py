@@ -33,19 +33,16 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
      # Exclude some locations
     options = world.options
     greed_value = options.include_greed_mode.value
-    challenge_value = options.include_challenges.value
-    repetitious_value = options.include_repetitious.value
+    challenge_value = options.exclude_challenges.value
+    repetitious_value = options.exclude_repetition.value
     bossanity_value = options.bossanity.value
     chapter_completionsanity_value = options.chapter_completionsanity.value
     char_exclusions = options.exclude_characters.get_excluded_characters()
     for location in locations:
 
         # Challenges!!!
-        if "Challenge" in location.categories:
-            if challenge_value == options.include_challenges.option_exclude: # Exclude
-                exclude_location(locations, location)
-            elif challenge_value == options.include_challenges.option_remove: # Remove
-                remove_location(locations, location)
+        if challenge_value == options.exclude_challenges.option_true and "Challenge" in location.categories:
+            exclude_location(locations, location)
 
         # No Greed Mode? (Insert Megamind image)
         if greed_value != options.include_greed_mode.option_greed_and_greedier and (location.region in ["Greed Mode", "Greedier Mode"] or "All Marks" in location.categories):
@@ -58,11 +55,8 @@ def make_locations(world: "TBOIWorld") -> list[LocationData]:
             exclude_location(locations, location)
 
         # If we are excluding/removing repetitious locations
-        if repetitious_value != options.include_repetitious.option_include and location.repetitions > 1:
-            if repetitious_value == options.include_repetitious.option_exclude: # Exclude
-                exclude_location(locations, location)
-            elif repetitious_value == options.include_repetitious.option_remove: # Remove
-                remove_location(locations, location)
+        if repetitious_value != options.exclude_repetition.option_true and location.repetitions > 1:
+            exclude_location(locations, location)
 
         # Bossanity!
         if bossanity_value != options.bossanity.option_on and location.categories[0] == "Boss_Clear" and location.custom:

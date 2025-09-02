@@ -99,7 +99,7 @@ class IncludeGreedMode(Choice):
     option_greed_and_greedier = 3
     default = 1
 
-class ExcludeRepetitiousLocations(Choice):
+class ExcludeRepetitiousLocations(Toggle):
     """
     Exclude 'repetitious' locations (e.g. 'Break 100 Tinted Rocks') from possible having a required item.
     This makes them entirely optional.
@@ -359,7 +359,7 @@ class TBOIOptions(PerGameCommonOptions):
     consumable_locations: ConsumableLocations
     include_greed_mode: IncludeGreedMode
     exclude_challenges: ExcludeChallenges
-    exclude_repeition: ExcludeRepetitiousLocations
+    exclude_repetition: ExcludeRepetitiousLocations
     bossanity: Bossanity
     chapter_completionsanity: ChapterCompletionsanity
     character_completion_hints: CharacterCompletionHints

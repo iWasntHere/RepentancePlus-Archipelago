@@ -5,7 +5,7 @@ import time
 from typing import Optional, NamedTuple
 
 from CommonClient import get_base_parser, CommonContext, gui_enabled, server_loop, logger
-from NetUtils import NetworkItem
+from NetUtils import NetworkItem, ClientStatus
 from settings import get_settings
 from worlds.tboirp.Settings import TBOISettings
 
@@ -43,6 +43,9 @@ class TBOIContext(CommonContext):
     must_update_file: bool # 'True' when the incoming_ap_data.lua file must be written
     local_seed_name: str # The seed name as reported by the mod
 
+    baby_codes: list[int] # Codes of baby items that are involved in this run
+    required_baby_count: int # Required number of babies to win
+
     def __init__(self, server_address, password, game_directory: str, save_slot: int):
         super().__init__(server_address, password)
 
@@ -54,6 +57,9 @@ class TBOIContext(CommonContext):
         self.items_sent = []
 
         self.must_update_file = True
+
+        self.baby_codes = []
+        self.required_baby_count = 50
 
     def run_gui(self):
         from kvui import GameManager
@@ -136,6 +142,9 @@ class TBOIContext(CommonContext):
             self.must_update_file = True # Update the output file when an item is received
         elif cmd == "RoomInfo":
             self.seed_name = args["seed_name"]
+        elif cmd == "Connected":
+            self.baby_codes = args["slot_data"]["baby_codes"]
+            self.required_baby_count = args["slot_data"]["required_baby_count"]
 
 async def handle_sending_locations(ctx: TBOIContext):
     if not os.path.isfile(ctx.game_output_file_path): # No output file, therefore, no locations to send
@@ -208,6 +217,10 @@ async def handle_receiving_items(ctx: TBOIContext):
         in ctx.items_sent
     }
 
+    # Check if we've goaled
+    if not ctx.finished_game and count_babies(ctx.baby_codes, ctx.items_received) >= ctx.required_baby_count:
+        await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
+
     out_content = json.dumps({**incoming_items, **outgoing_items})
 
     try:
@@ -216,6 +229,9 @@ async def handle_receiving_items(ctx: TBOIContext):
             file.close()
     finally:
         pass  # We don't really care if this fails
+
+def count_babies(babies: list[int], items: list[NetworkItem]):
+    return len(list(filter(lambda item: item.item in babies, items)))
 
 async def progression_watcher(ctx: TBOIContext):
     while not ctx.exit_event.is_set():

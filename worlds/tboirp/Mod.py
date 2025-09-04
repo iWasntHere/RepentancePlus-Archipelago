@@ -1,3 +1,4 @@
+import math
 import os
 import threading
 import zipfile
@@ -214,7 +215,8 @@ def generate_mod(world: "TBOIWorld", output_directory: str):
         "consumable_location_count": world.options.consumable_locations.value,
         "target_baby_codes": world.babies,
         "fortune_hints": make_fortune_hints(world),
-        "location_information": make_location_info(world)
+        "location_information": make_location_info(world),
+        "required_baby_count": math.floor(world.options.max_babies.value * (world.options.baby_ratio_required.value / 100))
     }
 
     # Create the .zip

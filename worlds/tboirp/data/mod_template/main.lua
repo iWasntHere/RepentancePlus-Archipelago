@@ -13,6 +13,7 @@ ArchipelagoSlot.SHOP_DONATION_COUNT = {{ shop_donation_location_count }}
 ArchipelagoSlot.GREED_DONATION_COUNT = {{ greed_donation_location_count }}
 ArchipelagoSlot.CONSUMABLE_COUNT = {{ consumable_location_count }}
 ArchipelagoSlot.TARGET_BABY_CODES = {{ list_to_lua(target_baby_codes) }}
+ArchipelagoSlot.REQUIRED_BABY_COUNT = {{ required_baby_count }}
 
 ArchipelagoSlot.HINT_FORTUNES = require("fortune_hints")
 

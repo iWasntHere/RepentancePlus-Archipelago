@@ -1,4 +1,5 @@
-from typing import Dict, ClassVar
+import math
+from typing import Dict, ClassVar, Mapping, Any
 
 from BaseClasses import Item, Tutorial, LocationProgressType
 from worlds.AutoWorld import World, WebWorld
@@ -143,4 +144,10 @@ class TBOIWorld(World):
                 self.pool_rando = do_pool_rando_shuffle(self)
 
         self.logic.items_in_pool = [name for name, data in self.usable_items.items()]
+
+    def fill_slot_data(self) -> Mapping[str, Any]:
+        return {
+            "baby_codes": self.babies,
+            "required_baby_count": math.floor(self.options.max_babies.value * (self.options.baby_ratio_required.value / 100))
+        }
 
